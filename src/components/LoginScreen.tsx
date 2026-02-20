@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 
-export default function LoginScreen({ onStart }: { onStart: () => void }) {
+export default function LoginScreen({ onStart }: { onStart: (name: string, className: string) => void }) {
   const [name, setName] = useState('');
   const [className, setClassName] = useState('');
   const [error, setError] = useState('');
@@ -13,7 +13,7 @@ export default function LoginScreen({ onStart }: { onStart: () => void }) {
       setError('Please fill in all fields.');
       return;
     }
-    onStart();
+    onStart(name, className);
   };
 
   return (
