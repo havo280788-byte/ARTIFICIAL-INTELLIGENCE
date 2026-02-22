@@ -52,7 +52,7 @@ export const QUESTIONS: Question[] = [
         id: 'q2',
         type: 'tfd',
         question: 'AI is widely used because it can process large amounts of data and imitate human brain functions.',
-        options: ['True', 'False', "Doesn't say"],
+        options: ['True', 'False'],
         answer: 'True'
     },
     // Stage 3 - TFD
@@ -60,7 +60,7 @@ export const QUESTIONS: Question[] = [
         id: 'q3',
         type: 'tfd',
         question: 'Industrial robots are mainly designed to help people with their daily household chores.',
-        options: ['True', 'False', "Doesn't say"],
+        options: ['True', 'False'],
         answer: 'False'
     },
     // Stage 4 - TFD
@@ -68,7 +68,7 @@ export const QUESTIONS: Question[] = [
         id: 'q4',
         type: 'tfd',
         question: 'The high speed and accuracy of AI-powered robots help to improve productivity in factories.',
-        options: ['True', 'False', "Doesn't say"],
+        options: ['True', 'False'],
         answer: 'True'
     },
     // Stage 5 - TFD
@@ -76,7 +76,7 @@ export const QUESTIONS: Question[] = [
         id: 'q5',
         type: 'tfd',
         question: 'Rescue robots are unable to make their own choices when they meet obstacles.',
-        options: ['True', 'False', "Doesn't say"],
+        options: ['True', 'False'],
         answer: 'False'
     },
     // Stage 6 - MCQ
@@ -92,7 +92,7 @@ export const QUESTIONS: Question[] = [
         id: 'q7',
         type: 'tfd',
         question: 'AI gadgets like digital assistants, navigation apps, and diet trackers are changing our personal habits.',
-        options: ['True', 'False', "Doesn't say"],
+        options: ['True', 'False'],
         answer: 'True'
     },
     // Stage 8 - MCQ
