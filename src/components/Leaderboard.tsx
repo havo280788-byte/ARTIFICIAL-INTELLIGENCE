@@ -1,8 +1,11 @@
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { db } from '../utils/firebase';
+import { collection, onSnapshot, deleteDoc, doc, getDocs } from 'firebase/firestore';
 
 interface Entry {
+    id?: string;
     name: string;
     class: string;
     time: number;
@@ -17,28 +20,36 @@ type ViewMode = 'student' | 'teacher';
 export default function Leaderboard({ onBack }: { onBack: () => void }) {
     const [viewMode, setViewMode] = useState<ViewMode>('student');
     const [resetConfirm, setResetConfirm] = useState(false);
+    const [data, setData] = useState<Entry[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    const loadData = (): Entry[] => {
-        const raw = localStorage.getItem('leaderboardARTIFICIAL INTELLIGENCE');
-        if (!raw) return [];
-        try {
-            const parsed = JSON.parse(raw) as Entry[];
-            return parsed.sort((a, b) => {
+    // Realtime listener
+    useEffect(() => {
+        const unsub = onSnapshot(collection(db, 'leaderboard'), (snapshot) => {
+            const entries: Entry[] = snapshot.docs.map(d => ({
+                id: d.id,
+                ...(d.data() as Omit<Entry, 'id'>)
+            }));
+            entries.sort((a, b) => {
                 const scoreA = a.score ?? 0;
                 const scoreB = b.score ?? 0;
                 if (scoreB !== scoreA) return scoreB - scoreA;
                 return a.time - b.time;
             });
-        } catch {
-            return [];
+            setData(entries);
+            setLoading(false);
+        });
+        return () => unsub();
+    }, []);
+
+    const handleReset = async () => {
+        try {
+            const snap = await getDocs(collection(db, 'leaderboard'));
+            const deletes = snap.docs.map(d => deleteDoc(doc(db, 'leaderboard', d.id)));
+            await Promise.all(deletes);
+        } catch (err) {
+            console.error('Reset failed:', err);
         }
-    };
-
-    const [data, setData] = useState<Entry[]>(loadData);
-
-    const handleReset = () => {
-        localStorage.removeItem('leaderboardARTIFICIAL INTELLIGENCE');
-        setData([]);
         setResetConfirm(false);
     };
 
@@ -51,25 +62,21 @@ export default function Leaderboard({ onBack }: { onBack: () => void }) {
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     };
 
-    // Teacher View analytics
     const analytics = useMemo(() => {
         if (data.length === 0) return null;
 
         const completedEntries = data.filter(e => (e.score ?? 0) === (e.totalQuestions ?? 9));
         const completionRate = data.length > 0 ? Math.round((completedEntries.length / data.length) * 100) : 0;
 
-        // Average accuracy
         const avgAccuracy = data.length > 0
             ? Math.round(data.reduce((sum, e) => sum + ((e.score ?? 0) / (e.totalQuestions ?? 9)) * 100, 0) / data.length)
             : 0;
 
-        // Fastest time (among >= 80% accuracy)
         const highAccuracyEntries = data.filter(e => ((e.score ?? 0) / (e.totalQuestions ?? 9)) >= 0.8);
         const fastestTime = highAccuracyEntries.length > 0
             ? Math.min(...highAccuracyEntries.map(e => e.time))
             : null;
 
-        // Per-question correct rate
         const questionStats: { [key: string]: { correct: number; total: number } } = {};
         data.forEach(entry => {
             entry.answers?.forEach(a => {
@@ -93,13 +100,11 @@ export default function Leaderboard({ onBack }: { onBack: () => void }) {
                 rate: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0
             }));
 
-        // Hardest questions
         const hardest = [...questionRates].sort((a, b) => a.rate - b.rate).slice(0, 2);
 
         return { completionRate, avgAccuracy, fastestTime, questionRates, hardest, totalTeams: data.length };
     }, [data]);
 
-    // Skills breakdown categories for English 12 reading
     const skillsBreakdown = useMemo(() => {
         if (!analytics || analytics.questionRates.length === 0) return [];
 
@@ -121,6 +126,17 @@ export default function Leaderboard({ onBack }: { onBack: () => void }) {
         });
     }, [data, analytics]);
 
+    if (loading) {
+        return (
+            <div className="min-h-screen animated-gradient-bg flex items-center justify-center">
+                <div className="text-white text-center">
+                    <div className="text-4xl mb-4 animate-pulse">⏳</div>
+                    <p className="text-sm text-[#94A3B8]">Loading leaderboard...</p>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen animated-gradient-bg p-4 md:p-6 flex flex-col items-center">
             <motion.div
@@ -139,7 +155,6 @@ export default function Leaderboard({ onBack }: { onBack: () => void }) {
                             </div>
                         </div>
 
-                        {/* View Toggle */}
                         <div className="flex bg-[#1E293B] rounded-lg p-1 border border-[#334155]">
                             <button
                                 onClick={() => setViewMode('student')}
@@ -162,7 +177,6 @@ export default function Leaderboard({ onBack }: { onBack: () => void }) {
                 {/* STUDENT VIEW */}
                 {viewMode === 'student' && (
                     <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                        {/* Column headers */}
                         <div className="px-6 py-3 border-b border-[#F1F5F9] flex justify-between items-center text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider">
                             <span>Rank & Team</span>
                             <div className="flex gap-8">
@@ -175,7 +189,7 @@ export default function Leaderboard({ onBack }: { onBack: () => void }) {
                             {top10.length > 0 ? (
                                 top10.map((entry, index) => (
                                     <div
-                                        key={index}
+                                        key={entry.id || index}
                                         className={`flex items-center justify-between px-6 py-3.5 transition-colors ${index === 0 ? 'bg-[#FFFBEB]' :
                                             index === 1 ? 'bg-[#F8FAFC]' :
                                                 index === 2 ? 'bg-[#FFF7ED]' : ''
@@ -212,7 +226,6 @@ export default function Leaderboard({ onBack }: { onBack: () => void }) {
                             )}
                         </div>
 
-                        {/* Footer */}
                         <div className="px-6 py-4 border-t border-[#F1F5F9] flex items-center justify-between">
                             <span className="text-xs text-[#94A3B8]">{totalEntries} total entries</span>
                             <button

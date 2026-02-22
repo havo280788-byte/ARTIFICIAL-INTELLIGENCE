@@ -1,8 +1,10 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Question, READING_PASSAGE, QUESTIONS } from '../utils/gameData';
 import { AnswerRecord } from '../App';
+import { db } from '../utils/firebase';
+import { collection, getDocs } from 'firebase/firestore';
 
 interface LeaderboardEntry {
     name: string;
@@ -23,25 +25,46 @@ interface ReviewModeProps {
 export default function ReviewMode({ answers, questions, onBack }: ReviewModeProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [selectedStudent, setSelectedStudent] = useState(0);
+    const [studentEntries, setStudentEntries] = useState<LeaderboardEntry[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    // Load student submissions from localStorage for teacher use
-    const studentEntries: LeaderboardEntry[] = useMemo(() => {
-        const raw = localStorage.getItem('leaderboardARTIFICIAL INTELLIGENCE');
-        if (!raw) return [];
-        try {
-            const parsed = JSON.parse(raw) as LeaderboardEntry[];
-            return parsed.filter(e => e.answers && e.answers.length > 0);
-        } catch {
-            return [];
+    // Load student submissions from Firestore for teacher use
+    useEffect(() => {
+        if (answers.length > 0) {
+            setLoading(false);
+            return;
         }
-    }, []);
+        const load = async () => {
+            try {
+                const snap = await getDocs(collection(db, 'leaderboard'));
+                const entries = snap.docs
+                    .map(d => d.data() as LeaderboardEntry)
+                    .filter(e => e.answers && e.answers.length > 0);
+                setStudentEntries(entries);
+            } catch (err) {
+                console.error('Failed to load student data:', err);
+            }
+            setLoading(false);
+        };
+        load();
+    }, [answers]);
 
-    // Determine which answer set to use
     const isTeacherView = answers.length === 0;
     const activeAnswers = isTeacherView
         ? (studentEntries[selectedStudent]?.answers || [])
         : answers;
     const activeQuestions = questions.length > 0 ? questions : QUESTIONS;
+
+    if (loading) {
+        return (
+            <div className="min-h-screen animated-gradient-bg flex items-center justify-center">
+                <div className="text-white text-center">
+                    <div className="text-4xl mb-4 animate-pulse">⏳</div>
+                    <p className="text-sm text-[#94A3B8]">Loading student data...</p>
+                </div>
+            </div>
+        );
+    }
 
     if (activeAnswers.length === 0) {
         return (
@@ -61,7 +84,6 @@ export default function ReviewMode({ answers, questions, onBack }: ReviewModePro
     const answer = activeAnswers[currentIndex];
     const question = activeQuestions.find(q => q.id === answer.questionId);
 
-    // Find relevant passage text to highlight
     const getHighlightedPassage = () => {
         if (!question) return READING_PASSAGE;
 
@@ -256,4 +278,3 @@ export default function ReviewMode({ answers, questions, onBack }: ReviewModePro
         </div>
     );
 }
-

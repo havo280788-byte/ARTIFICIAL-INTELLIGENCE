@@ -9,6 +9,8 @@ import Leaderboard from './components/Leaderboard';
 import ReviewMode from './components/ReviewMode';
 import WaitingScreen from './components/WaitingScreen';
 import { STAGES, getRandomQuestions, Question } from './utils/gameData';
+import { db } from './utils/firebase';
+import { collection, addDoc } from 'firebase/firestore';
 
 export type AnswerRecord = {
   questionId: string;
@@ -119,7 +121,7 @@ export default function App() {
     }
   };
 
-  const saveToLeaderboard = (duration: number, finalScore: number, allAnswers: AnswerRecord[]) => {
+  const saveToLeaderboard = async (duration: number, finalScore: number, allAnswers: AnswerRecord[]) => {
     const entry = {
       name: player.name,
       class: player.className,
@@ -130,12 +132,10 @@ export default function App() {
       date: new Date().toISOString().replace('T', ' ').substring(0, 16)
     };
 
-    const rawData = localStorage.getItem('leaderboardARTIFICIAL INTELLIGENCE');
-    let data = rawData ? JSON.parse(rawData) : [];
-
-    if (data.length < 999) {
-      data.push(entry);
-      localStorage.setItem('leaderboardARTIFICIAL INTELLIGENCE', JSON.stringify(data));
+    try {
+      await addDoc(collection(db, 'leaderboard'), entry);
+    } catch (err) {
+      console.error('Failed to save to Firestore:', err);
     }
   };
 
