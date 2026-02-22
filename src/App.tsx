@@ -102,12 +102,16 @@ export default function App() {
         setScreen(mode === 'student' ? 'win' : 'login');
       }
     } else {
-      const duration = (8 * 60) - timeLeft;
-      // Only save in student mode
-      if (mode === 'student') {
-        saveToLeaderboard(duration, score, [...answers, record]);
+      // Wrong answer: continue to next question (no game over)
+      if (currentStage < STAGES.length - 1) {
+        setCurrentStage(prev => prev + 1);
+      } else {
+        const duration = (8 * 60) - timeLeft;
+        if (mode === 'student') {
+          saveToLeaderboard(duration, score, [...answers, record]);
+        }
+        setScreen(mode === 'student' ? 'win' : 'login');
       }
-      setScreen(mode === 'student' ? 'gameover' : 'login');
     }
   };
 
