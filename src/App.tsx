@@ -25,10 +25,12 @@ export default function App() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [score, setScore] = useState(0);
   const [answers, setAnswers] = useState<AnswerRecord[]>([]);
+  const [mode, setMode] = useState<'student' | 'teacher'>('student');
   const timerRef = useRef<any>(null);
 
+  // Timer: only runs in student mode
   useEffect(() => {
-    if (screen === 'game' && timeLeft > 0) {
+    if (screen === 'game' && timeLeft > 0 && mode === 'student') {
       timerRef.current = setInterval(() => {
         setTimeLeft(prev => {
           if (prev <= 1) {
@@ -45,8 +47,9 @@ export default function App() {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [screen, timeLeft]);
+  }, [screen, timeLeft, mode]);
 
+  // Student start
   const handleStart = (name: string, className: string) => {
     setPlayer({ name, className });
     setQuestions(getRandomQuestions());
@@ -54,9 +57,23 @@ export default function App() {
     setTimeLeft(8 * 60);
     setScore(0);
     setAnswers([]);
+    setMode('student');
     setScreen('game');
   };
 
+  // Teacher start (no name/class needed, no timer)
+  const handleTeacherStart = () => {
+    setPlayer({ name: 'Teacher', className: '' });
+    setQuestions(getRandomQuestions());
+    setCurrentStage(0);
+    setTimeLeft(8 * 60); // not used but reset
+    setScore(0);
+    setAnswers([]);
+    setMode('teacher');
+    setScreen('game');
+  };
+
+  // Student: handle answer with score/save logic
   const handleAnswer = (selected: string, isCorrect: boolean) => {
     const q = questions[currentStage];
     const record: AnswerRecord = {
@@ -74,15 +91,30 @@ export default function App() {
         setCurrentStage(prev => prev + 1);
       } else {
         const duration = (8 * 60) - timeLeft;
-        const finalScore = score + 1; // current score + this correct answer
-        saveToLeaderboard(duration, finalScore, [...answers, record]);
-        setScreen('win');
+        const finalScore = score + 1;
+        // Only save in student mode
+        if (mode === 'student') {
+          saveToLeaderboard(duration, finalScore, [...answers, record]);
+        }
+        setScreen(mode === 'student' ? 'win' : 'login');
       }
     } else {
-      // On incorrect, still move to gameover but record the answer
       const duration = (8 * 60) - timeLeft;
-      saveToLeaderboard(duration, score, [...answers, record]);
-      setScreen('gameover');
+      // Only save in student mode
+      if (mode === 'student') {
+        saveToLeaderboard(duration, score, [...answers, record]);
+      }
+      setScreen(mode === 'student' ? 'gameover' : 'login');
+    }
+  };
+
+  // Teacher: next question (no scoring)
+  const handleTeacherNext = () => {
+    if (currentStage < STAGES.length - 1) {
+      setCurrentStage(prev => prev + 1);
+    } else {
+      // All questions reviewed — go back to login
+      setScreen('login');
     }
   };
 
@@ -113,18 +145,26 @@ export default function App() {
       <AnimatePresence mode="wait">
         {screen === 'login' && (
           <motion.div key="login" exit={{ opacity: 0 }}>
-            <LoginScreen onStart={handleStart} />
+            <LoginScreen onStart={handleStart} onTeacherStart={handleTeacherStart} />
           </motion.div>
         )}
 
         {screen === 'game' && (
           <motion.div key="game" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col min-h-screen bg-[#0F172A]">
-            <GameHeader currentStage={currentStage} timeLeft={timeLeft} />
+            <GameHeader
+              currentStage={currentStage}
+              timeLeft={timeLeft}
+              mode={mode}
+              onShowLeaderboard={mode === 'teacher' ? () => setScreen('leaderboard') : undefined}
+              onShowReview={mode === 'teacher' ? () => setScreen('review') : undefined}
+            />
             <div className="p-3 md:p-5 w-full flex-1">
               <QuizCard
                 question={questions[currentStage]}
                 stageNum={currentStage + 1}
                 onAnswer={handleAnswer}
+                mode={mode}
+                onNextQuestion={mode === 'teacher' ? handleTeacherNext : undefined}
               />
             </div>
           </motion.div>
@@ -158,7 +198,7 @@ export default function App() {
 
         {screen === 'leaderboard' && (
           <motion.div key="leaderboard" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <Leaderboard onBack={() => setScreen('login')} />
+            <Leaderboard onBack={() => setScreen(mode === 'teacher' ? 'game' : 'login')} />
           </motion.div>
         )}
 
@@ -167,7 +207,7 @@ export default function App() {
             <ReviewMode
               answers={answers}
               questions={questions}
-              onBack={() => setScreen('login')}
+              onBack={() => setScreen(mode === 'teacher' ? 'game' : 'login')}
             />
           </motion.div>
         )}

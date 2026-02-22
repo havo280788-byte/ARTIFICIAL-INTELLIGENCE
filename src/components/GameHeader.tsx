@@ -6,9 +6,12 @@ import { STAGES } from '../utils/gameData';
 interface GameHeaderProps {
     currentStage: number;
     timeLeft: number; // in seconds
+    mode: 'student' | 'teacher';
+    onShowLeaderboard?: () => void;
+    onShowReview?: () => void;
 }
 
-export default function GameHeader({ currentStage, timeLeft }: GameHeaderProps) {
+export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderboard, onShowReview }: GameHeaderProps) {
     const formatTime = (seconds: number) => {
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
@@ -35,7 +38,7 @@ export default function GameHeader({ currentStage, timeLeft }: GameHeaderProps) 
 
     return (
         <div className="w-full bg-[#0F172A] text-white px-4 py-3 md:px-6 md:py-4 shadow-2xl flex flex-col gap-3">
-            {/* Top Row: Title + Timer */}
+            {/* Top Row: Title + Timer/Teacher badge */}
             <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
                     <span className="text-2xl md:text-3xl">🤖</span>
@@ -49,9 +52,41 @@ export default function GameHeader({ currentStage, timeLeft }: GameHeaderProps) 
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2 bg-[#1E293B] px-3 py-1.5 rounded-full border border-[#334155]">
-                    <span className="text-base text-[#22D3EE]">⏱</span>
-                    <span className="font-mono text-lg md:text-xl font-bold tracking-wider">{formatTime(timeLeft)}</span>
+                <div className="flex items-center gap-2">
+                    {mode === 'student' ? (
+                        /* Student: Timer */
+                        <div className="flex items-center gap-2 bg-[#1E293B] px-3 py-1.5 rounded-full border border-[#334155]">
+                            <span className="text-base text-[#22D3EE]">⏱</span>
+                            <span className="font-mono text-lg md:text-xl font-bold tracking-wider">{formatTime(timeLeft)}</span>
+                        </div>
+                    ) : (
+                        /* Teacher: Mode badge + controls */
+                        <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1.5 bg-[#064E3B] px-3 py-1.5 rounded-full border border-[#10B981]/30">
+                                <span className="text-sm">🟢</span>
+                                <span className="text-xs font-bold text-[#6EE7B7] uppercase tracking-wider whitespace-nowrap">Teacher Mode</span>
+                            </div>
+                            {/* Teacher-only quick actions */}
+                            <div className="hidden md:flex items-center gap-1.5">
+                                {onShowReview && (
+                                    <button
+                                        onClick={onShowReview}
+                                        className="px-2.5 py-1 bg-[#1E293B] text-[#94A3B8] text-[10px] font-bold rounded-lg border border-[#334155] hover:bg-[#334155] hover:text-white transition-colors uppercase tracking-wider"
+                                    >
+                                        Review
+                                    </button>
+                                )}
+                                {onShowLeaderboard && (
+                                    <button
+                                        onClick={onShowLeaderboard}
+                                        className="px-2.5 py-1 bg-[#1E293B] text-[#94A3B8] text-[10px] font-bold rounded-lg border border-[#334155] hover:bg-[#334155] hover:text-white transition-colors uppercase tracking-wider"
+                                    >
+                                        Leaderboard
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 

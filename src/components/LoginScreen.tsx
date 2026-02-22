@@ -1,11 +1,21 @@
 
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
-export default function LoginScreen({ onStart }: { onStart: (name: string, className: string) => void }) {
+interface LoginScreenProps {
+  onStart: (name: string, className: string) => void;
+  onTeacherStart: () => void;
+}
+
+export default function LoginScreen({ onStart, onTeacherStart }: LoginScreenProps) {
   const [name, setName] = useState('');
   const [className, setClassName] = useState('');
   const [error, setError] = useState('');
+  const [showPinDialog, setShowPinDialog] = useState(false);
+  const [pin, setPin] = useState('');
+  const [pinError, setPinError] = useState('');
+
+  const TEACHER_PIN = '1234';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -14,6 +24,26 @@ export default function LoginScreen({ onStart }: { onStart: (name: string, class
       return;
     }
     onStart(name, className);
+  };
+
+  const handlePinSubmit = () => {
+    if (pin === TEACHER_PIN) {
+      setPinError('');
+      setShowPinDialog(false);
+      setPin('');
+      onTeacherStart();
+    } else {
+      setPinError('Incorrect PIN. Please try again.');
+    }
+  };
+
+  const handlePinKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') handlePinSubmit();
+    if (e.key === 'Escape') {
+      setShowPinDialog(false);
+      setPin('');
+      setPinError('');
+    }
   };
 
   return (
@@ -102,6 +132,20 @@ export default function LoginScreen({ onStart }: { onStart: (name: string, class
             </motion.button>
           </form>
 
+          {/* Teacher Button — desktop only (hidden on mobile) */}
+          <div className="hidden md:block mt-4">
+            <button
+              onClick={() => {
+                setShowPinDialog(true);
+                setPinError('');
+                setPin('');
+              }}
+              className="w-full py-3 bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] font-medium rounded-xl text-sm hover:bg-[#F1F5F9] hover:border-[#CBD5E1] transition-all flex items-center justify-center gap-2"
+            >
+              🔒 Teacher
+            </button>
+          </div>
+
           {/* Settings link */}
           <div className="text-center mt-5">
             <span className="text-[#94A3B8] text-sm cursor-pointer hover:text-[#64748B] transition-colors">
@@ -110,6 +154,71 @@ export default function LoginScreen({ onStart }: { onStart: (name: string, class
           </div>
         </div>
       </motion.div>
+
+      {/* PIN Dialog Overlay */}
+      <AnimatePresence>
+        {showPinDialog && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            onClick={() => {
+              setShowPinDialog(false);
+              setPin('');
+              setPinError('');
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-xs"
+            >
+              <div className="text-center mb-4">
+                <div className="text-3xl mb-2">🔒</div>
+                <h3 className="text-lg font-bold text-[#0F172A]">Teacher Access</h3>
+                <p className="text-xs text-[#64748B] mt-1">Enter PIN to continue</p>
+              </div>
+
+              <input
+                type="password"
+                value={pin}
+                onChange={(e) => setPin(e.target.value)}
+                onKeyDown={handlePinKeyDown}
+                className="w-full px-4 py-3 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-center text-2xl tracking-[0.5em] font-mono text-[#0F172A] placeholder-[#CBD5E1] focus:outline-none focus:ring-2 focus:ring-[#22D3EE]/50 focus:border-[#22D3EE] transition-all"
+                placeholder="••••"
+                maxLength={6}
+                autoFocus
+              />
+
+              {pinError && (
+                <p className="text-red-500 text-xs text-center mt-2 font-medium">{pinError}</p>
+              )}
+
+              <div className="flex gap-2 mt-4">
+                <button
+                  onClick={() => {
+                    setShowPinDialog(false);
+                    setPin('');
+                    setPinError('');
+                  }}
+                  className="flex-1 py-2.5 rounded-xl border border-[#E2E8F0] text-[#64748B] font-medium text-sm hover:bg-[#F8FAFC] transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handlePinSubmit}
+                  className="flex-1 py-2.5 rounded-xl bg-[#0F172A] text-white font-bold text-sm hover:bg-[#1E293B] transition-colors"
+                >
+                  Enter
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
