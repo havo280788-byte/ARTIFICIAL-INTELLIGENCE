@@ -38,7 +38,6 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
             setFeedback('correct');
         } else {
             setFeedback('incorrect');
-            setTimeout(() => onAnswer(selected, false), 1200);
         }
     };
 
@@ -204,8 +203,8 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                         <button
                                             onClick={handleHighlightToggle}
                                             className={`px-2 py-1 text-[10px] font-bold rounded-md border transition-colors ${highlightMode
-                                                    ? 'bg-[#FEF3C7] border-[#F59E0B] text-[#92400E]'
-                                                    : 'bg-[#F8FAFC] border-[#E2E8F0] text-[#94A3B8] hover:bg-[#FEF3C7] hover:text-[#92400E]'
+                                                ? 'bg-[#FEF3C7] border-[#F59E0B] text-[#92400E]'
+                                                : 'bg-[#F8FAFC] border-[#E2E8F0] text-[#94A3B8] hover:bg-[#FEF3C7] hover:text-[#92400E]'
                                                 }`}
                                             title="Toggle highlight mode"
                                         >
@@ -282,9 +281,20 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                                 key="incorrect"
                                                 initial={{ opacity: 0 }}
                                                 animate={{ x: [0, -8, 8, -8, 8, 0], opacity: 1 }}
-                                                className="text-xl md:text-2xl font-black text-[#DC2626] tracking-wider"
+                                                className="text-center w-full"
                                             >
-                                                ❌ INCORRECT.
+                                                <div className="text-xl md:text-2xl font-black text-[#DC2626] mb-2 tracking-wider">
+                                                    ❌ INCORRECT
+                                                </div>
+                                                <p className="text-sm text-[#64748B] mb-4">
+                                                    You should review the passage again.
+                                                </p>
+                                                <button
+                                                    onClick={() => onAnswer(selected!, false)}
+                                                    className="w-full py-3.5 bg-[#0F172A] text-white font-bold rounded-xl shadow-lg transition-transform hover:scale-[1.02] active:scale-95 uppercase tracking-widest text-sm"
+                                                >
+                                                    ▶ Continue Challenge
+                                                </button>
                                             </motion.div>
                                         ) : (
                                             <button

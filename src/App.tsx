@@ -21,7 +21,7 @@ export type AnswerRecord = {
 };
 
 export default function App() {
-  const [screen, setScreen] = useState<'login' | 'game' | 'gameover' | 'incorrect' | 'win' | 'leaderboard' | 'review' | 'waiting'>('login');
+  const [screen, setScreen] = useState<'login' | 'game' | 'gameover' | 'win' | 'leaderboard' | 'review' | 'waiting'>('login');
   const [player, setPlayer] = useState({ name: '', className: '' });
   const [currentStage, setCurrentStage] = useState(0);
   const [timeLeft, setTimeLeft] = useState(8 * 60);
@@ -102,8 +102,16 @@ export default function App() {
         setScreen(mode === 'student' ? 'win' : 'login');
       }
     } else {
-      // Wrong answer: show incorrect feedback screen
-      setScreen('incorrect');
+      // Wrong answer: advance to next question (feedback shown inline in QuizCard)
+      if (currentStage < STAGES.length - 1) {
+        setCurrentStage(prev => prev + 1);
+      } else {
+        const duration = (8 * 60) - timeLeft;
+        if (mode === 'student') {
+          saveToLeaderboard(duration, score, [...answers, record]);
+        }
+        setScreen(mode === 'student' ? 'win' : 'login');
+      }
     }
   };
 
@@ -176,46 +184,6 @@ export default function App() {
               onLeaderboard={() => setScreen('leaderboard')}
               onReview={() => setScreen('review')}
             />
-          </motion.div>
-        )}
-
-        {screen === 'incorrect' && (
-          <motion.div key="incorrect" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <div className="min-h-screen animated-gradient-bg flex flex-col items-center justify-center p-4 text-center">
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 md:p-10 relative overflow-hidden"
-              >
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#DC2626] to-[#F59E0B]" />
-                <div className="text-6xl mb-4">❌</div>
-                <h1 className="text-2xl md:text-3xl font-black text-[#DC2626] mb-3 uppercase tracking-tight">
-                  Incorrect
-                </h1>
-                <p className="text-base text-[#64748B] mb-8 leading-relaxed">
-                  You should review the passage again.
-                </p>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => {
-                    if (currentStage < STAGES.length - 1) {
-                      setCurrentStage(prev => prev + 1);
-                      setScreen('game');
-                    } else {
-                      const duration = (8 * 60) - timeLeft;
-                      if (mode === 'student') {
-                        saveToLeaderboard(duration, score, [...answers]);
-                      }
-                      setScreen(mode === 'student' ? 'win' : 'login');
-                    }
-                  }}
-                  className="w-full py-3.5 bg-[#0F172A] text-white font-bold rounded-xl shadow-lg text-sm uppercase tracking-widest hover:bg-[#1E293B] transition-colors"
-                >
-                  ▶ Continue Challenge
-                </motion.button>
-              </motion.div>
-            </div>
           </motion.div>
         )}
 
