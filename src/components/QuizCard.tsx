@@ -94,7 +94,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
 
             if (parts.length > 0) {
                 return (
-                    <p className="text-sm text-[#334155] leading-relaxed" style={{ lineHeight: '1.6' }}>
+                    <p className="text-sm md:text-lg text-[#334155] leading-relaxed" style={{ lineHeight: '1.6' }}>
                         {parts.map((part, i) => (
                             <span
                                 key={i}
@@ -109,14 +109,14 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
         }
 
         return (
-            <p className="text-sm text-[#334155] leading-relaxed whitespace-pre-line" style={{ lineHeight: '1.6' }}>
+            <p className="text-sm md:text-lg text-[#334155] leading-relaxed whitespace-pre-line" style={{ lineHeight: '1.6' }}>
                 {READING_PASSAGE}
             </p>
         );
     };
 
     const getOptionStyle = (option: string) => {
-        const base = 'w-full p-3.5 md:p-4 rounded-xl border-2 text-left transition-all duration-200 font-medium text-sm md:text-base';
+        const base = 'w-full p-3.5 md:p-4 rounded-xl border-2 text-left transition-all duration-200 font-medium text-sm md:text-lg';
 
         // Teacher Reveal: show correct answer
         if (mode === 'teacher' && revealed && option === question.answer) {
@@ -224,7 +224,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
 
                         <div className="p-5 md:p-6 space-y-5">
                             {/* Question Text */}
-                            <h2 className="text-base md:text-lg font-bold text-[#0F172A] leading-snug">
+                            <h2 className="text-base md:text-xl font-bold text-[#0F172A] leading-snug">
                                 {question.question}
                             </h2>
 
