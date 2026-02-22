@@ -1,8 +1,18 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Question, READING_PASSAGE } from '../utils/gameData';
+import { Question, READING_PASSAGE, QUESTIONS } from '../utils/gameData';
 import { AnswerRecord } from '../App';
+
+interface LeaderboardEntry {
+    name: string;
+    class: string;
+    time: number;
+    score: number;
+    totalQuestions: number;
+    answers: { questionId: string; question: string; selectedAnswer: string; correctAnswer: string; isCorrect: boolean }[];
+    date: string;
+}
 
 interface ReviewModeProps {
     answers: AnswerRecord[];
@@ -12,32 +22,52 @@ interface ReviewModeProps {
 
 export default function ReviewMode({ answers, questions, onBack }: ReviewModeProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [selectedStudent, setSelectedStudent] = useState(0);
 
-    if (answers.length === 0) {
+    // Load student submissions from localStorage for teacher use
+    const studentEntries: LeaderboardEntry[] = useMemo(() => {
+        const raw = localStorage.getItem('leaderboardARTIFICIAL INTELLIGENCE');
+        if (!raw) return [];
+        try {
+            const parsed = JSON.parse(raw) as LeaderboardEntry[];
+            return parsed.filter(e => e.answers && e.answers.length > 0);
+        } catch {
+            return [];
+        }
+    }, []);
+
+    // Determine which answer set to use
+    const isTeacherView = answers.length === 0;
+    const activeAnswers = isTeacherView
+        ? (studentEntries[selectedStudent]?.answers || [])
+        : answers;
+    const activeQuestions = questions.length > 0 ? questions : QUESTIONS;
+
+    if (activeAnswers.length === 0) {
         return (
             <div className="min-h-screen animated-gradient-bg flex items-center justify-center p-4">
                 <div className="bg-white rounded-2xl p-8 text-center max-w-md">
-                    <p className="text-[#64748B] mb-4">No answers to review.</p>
+                    <div className="text-5xl mb-4">📭</div>
+                    <p className="text-[#64748B] mb-2 font-bold">No answers to review.</p>
+                    <p className="text-[#94A3B8] text-sm mb-6">No student submissions found yet.</p>
                     <button onClick={onBack} className="px-6 py-3 bg-[#0F172A] text-white font-bold rounded-xl">
-                        Back to Start
+                        ← Back
                     </button>
                 </div>
             </div>
         );
     }
 
-    const answer = answers[currentIndex];
-    const question = questions.find(q => q.id === answer.questionId);
+    const answer = activeAnswers[currentIndex];
+    const question = activeQuestions.find(q => q.id === answer.questionId);
 
     // Find relevant passage text to highlight
     const getHighlightedPassage = () => {
         if (!question) return READING_PASSAGE;
 
-        // Simple keyword-based highlighting
         const passageParagraphs = READING_PASSAGE.split('\n\n');
         const questionLower = question.question.toLowerCase();
 
-        // Determine which paragraph is most relevant
         let relevantParagraphIndex = -1;
         if (questionLower.includes('paragraph 1') || questionLower.includes('what can ai do')) {
             relevantParagraphIndex = 0;
@@ -57,25 +87,54 @@ export default function ReviewMode({ answers, questions, onBack }: ReviewModePro
 
     const highlightedParagraphs = getHighlightedPassage();
 
+    const formatTime = (seconds: number) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+
     return (
         <div className="min-h-screen bg-[#0F172A] flex flex-col">
             {/* Header */}
-            <div className="bg-[#0F172A] text-white px-4 py-3 flex justify-between items-center border-b border-[#1E293B]">
-                <div className="flex items-center gap-2">
-                    <span className="text-xl">📖</span>
-                    <h1 className="text-sm font-bold uppercase tracking-wider">Review Mode</h1>
+            <div className="bg-[#0F172A] text-white px-4 py-3 flex flex-col gap-2 border-b border-[#1E293B]">
+                <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                        <span className="text-xl">📖</span>
+                        <h1 className="text-sm font-bold uppercase tracking-wider">Review Mode</h1>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <span className="text-xs text-[#94A3B8]">
+                            Question {currentIndex + 1} of {activeAnswers.length}
+                        </span>
+                        <button
+                            onClick={onBack}
+                            className="px-3 py-1.5 bg-[#1E293B] text-white text-xs font-bold rounded-lg border border-[#334155] hover:bg-[#334155] transition-colors"
+                        >
+                            ✕ Close
+                        </button>
+                    </div>
                 </div>
-                <div className="flex items-center gap-3">
-                    <span className="text-xs text-[#94A3B8]">
-                        Question {currentIndex + 1} of {answers.length}
-                    </span>
-                    <button
-                        onClick={onBack}
-                        className="px-3 py-1.5 bg-[#1E293B] text-white text-xs font-bold rounded-lg border border-[#334155] hover:bg-[#334155] transition-colors"
-                    >
-                        ✕ Close
-                    </button>
-                </div>
+
+                {/* Student picker (teacher view only) */}
+                {isTeacherView && studentEntries.length > 0 && (
+                    <div className="flex items-center gap-2 bg-[#1E293B] rounded-lg px-3 py-2 border border-[#334155]">
+                        <span className="text-xs text-[#94A3B8] whitespace-nowrap">👤 Student:</span>
+                        <select
+                            value={selectedStudent}
+                            onChange={(e) => {
+                                setSelectedStudent(Number(e.target.value));
+                                setCurrentIndex(0);
+                            }}
+                            className="flex-1 bg-transparent text-white text-sm font-bold border-none outline-none cursor-pointer"
+                        >
+                            {studentEntries.map((entry, idx) => (
+                                <option key={idx} value={idx} className="bg-[#0F172A] text-white">
+                                    {entry.name} ({entry.class}) — {entry.score}/{entry.totalQuestions} — {formatTime(entry.time)}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                )}
             </div>
 
             {/* Body */}
@@ -96,8 +155,8 @@ export default function ReviewMode({ answers, questions, onBack }: ReviewModePro
                                         <p
                                             key={i}
                                             className={`text-sm leading-relaxed mb-4 rounded-lg transition-all ${p.highlighted
-                                                    ? 'bg-[#FEF3C7] border-l-4 border-[#F59E0B] pl-3 py-2 text-[#0F172A] font-medium'
-                                                    : 'text-[#64748B]'
+                                                ? 'bg-[#FEF3C7] border-l-4 border-[#F59E0B] pl-3 py-2 text-[#0F172A] font-medium'
+                                                : 'text-[#64748B]'
                                                 }`}
                                             style={{ lineHeight: '1.6' }}
                                         >
@@ -154,8 +213,8 @@ export default function ReviewMode({ answers, questions, onBack }: ReviewModePro
                                             >
                                                 <div className="flex items-center">
                                                     <span className={`w-7 h-7 rounded-full flex items-center justify-center mr-3 text-xs font-bold shrink-0 ${isCorrectOption ? 'bg-[#22C55E] text-white' :
-                                                            isWrongSelection ? 'bg-[#DC2626] text-white' :
-                                                                'bg-[#E2E8F0] text-[#94A3B8]'
+                                                        isWrongSelection ? 'bg-[#DC2626] text-white' :
+                                                            'bg-[#E2E8F0] text-[#94A3B8]'
                                                         }`}>
                                                         {isCorrectOption ? '✓' : isWrongSelection ? '✕' : String.fromCharCode(65 + idx)}
                                                     </span>
@@ -173,18 +232,18 @@ export default function ReviewMode({ answers, questions, onBack }: ReviewModePro
                                     onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
                                     disabled={currentIndex === 0}
                                     className={`flex-1 py-3 rounded-xl font-bold text-sm uppercase tracking-widest transition-colors ${currentIndex === 0
-                                            ? 'bg-[#F1F5F9] text-[#CBD5E1] cursor-not-allowed'
-                                            : 'bg-[#F8FAFC] text-[#334155] border border-[#E2E8F0] hover:bg-[#F1F5F9]'
+                                        ? 'bg-[#F1F5F9] text-[#CBD5E1] cursor-not-allowed'
+                                        : 'bg-[#F8FAFC] text-[#334155] border border-[#E2E8F0] hover:bg-[#F1F5F9]'
                                         }`}
                                 >
                                     ← Previous
                                 </button>
                                 <button
-                                    onClick={() => setCurrentIndex(prev => Math.min(answers.length - 1, prev + 1))}
-                                    disabled={currentIndex === answers.length - 1}
-                                    className={`flex-1 py-3 rounded-xl font-bold text-sm uppercase tracking-widest transition-colors ${currentIndex === answers.length - 1
-                                            ? 'bg-[#F1F5F9] text-[#CBD5E1] cursor-not-allowed'
-                                            : 'bg-[#0F172A] text-white hover:bg-[#1E293B]'
+                                    onClick={() => setCurrentIndex(prev => Math.min(activeAnswers.length - 1, prev + 1))}
+                                    disabled={currentIndex === activeAnswers.length - 1}
+                                    className={`flex-1 py-3 rounded-xl font-bold text-sm uppercase tracking-widest transition-colors ${currentIndex === activeAnswers.length - 1
+                                        ? 'bg-[#F1F5F9] text-[#CBD5E1] cursor-not-allowed'
+                                        : 'bg-[#0F172A] text-white hover:bg-[#1E293B]'
                                         }`}
                                 >
                                     Next →
@@ -197,3 +256,4 @@ export default function ReviewMode({ answers, questions, onBack }: ReviewModePro
         </div>
     );
 }
+

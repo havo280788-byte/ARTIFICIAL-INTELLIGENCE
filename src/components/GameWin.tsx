@@ -8,12 +8,14 @@ interface GameWinProps {
     score: number;
     totalQuestions: number;
     elapsedSeconds: number;
+    mode: 'student' | 'teacher';
     onRestart: () => void;
     onLeaderboard: () => void;
     onReview: () => void;
+    onWaiting: () => void;
 }
 
-export default function GameWin({ playerName, score, totalQuestions, elapsedSeconds, onRestart, onLeaderboard, onReview }: GameWinProps) {
+export default function GameWin({ playerName, score, totalQuestions, elapsedSeconds, mode, onRestart, onLeaderboard, onReview, onWaiting }: GameWinProps) {
     useEffect(() => {
         const duration = 3 * 1000;
         const end = Date.now() + duration;
@@ -101,32 +103,46 @@ export default function GameWin({ playerName, score, totalQuestions, elapsedSeco
                     </div>
                 </div>
 
-                {/* Buttons */}
+                {/* Buttons — Student vs Teacher */}
                 <div className="space-y-3">
-                    <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={onLeaderboard}
-                        className="w-full py-3.5 bg-[#0F172A] text-white font-bold rounded-xl shadow-lg text-sm uppercase tracking-widest hover:bg-[#1E293B] transition-colors"
-                    >
-                        🏆 View Leaderboard
-                    </motion.button>
-                    <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={onReview}
-                        className="w-full py-3.5 bg-[#22D3EE] text-white font-bold rounded-xl shadow-lg text-sm uppercase tracking-widest hover:bg-[#06B6D4] transition-colors"
-                    >
-                        📖 Review Answers
-                    </motion.button>
-                    <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={onRestart}
-                        className="w-full py-3.5 bg-[#F8FAFC] text-[#334155] font-bold rounded-xl text-sm uppercase tracking-widest border border-[#E2E8F0] hover:bg-[#F1F5F9] transition-colors"
-                    >
-                        Play Again
-                    </motion.button>
+                    {mode === 'student' ? (
+                        <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={onWaiting}
+                            className="w-full py-4 bg-[#0F172A] text-white font-bold rounded-xl shadow-lg text-sm uppercase tracking-widest hover:bg-[#1E293B] transition-colors flex items-center justify-center gap-2"
+                        >
+                            <span className="inline-block animate-pulse">⏳</span>
+                            Waiting for Teacher Review…
+                        </motion.button>
+                    ) : (
+                        <>
+                            <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={onLeaderboard}
+                                className="w-full py-3.5 bg-[#0F172A] text-white font-bold rounded-xl shadow-lg text-sm uppercase tracking-widest hover:bg-[#1E293B] transition-colors"
+                            >
+                                🏆 View Leaderboard
+                            </motion.button>
+                            <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={onReview}
+                                className="w-full py-3.5 bg-[#22D3EE] text-white font-bold rounded-xl shadow-lg text-sm uppercase tracking-widest hover:bg-[#06B6D4] transition-colors"
+                            >
+                                📖 Review Answers
+                            </motion.button>
+                            <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={onRestart}
+                                className="w-full py-3.5 bg-[#F8FAFC] text-[#334155] font-bold rounded-xl text-sm uppercase tracking-widest border border-[#E2E8F0] hover:bg-[#F1F5F9] transition-colors"
+                            >
+                                Play Again
+                            </motion.button>
+                        </>
+                    )}
                 </div>
             </motion.div>
         </div>

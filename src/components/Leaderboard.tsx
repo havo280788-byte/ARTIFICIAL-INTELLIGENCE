@@ -16,13 +16,13 @@ type ViewMode = 'student' | 'teacher';
 
 export default function Leaderboard({ onBack }: { onBack: () => void }) {
     const [viewMode, setViewMode] = useState<ViewMode>('student');
+    const [resetConfirm, setResetConfirm] = useState(false);
 
-    const data: Entry[] = useMemo(() => {
+    const loadData = (): Entry[] => {
         const raw = localStorage.getItem('leaderboardARTIFICIAL INTELLIGENCE');
         if (!raw) return [];
         try {
             const parsed = JSON.parse(raw) as Entry[];
-            // Sort by score desc, then time asc
             return parsed.sort((a, b) => {
                 const scoreA = a.score ?? 0;
                 const scoreB = b.score ?? 0;
@@ -32,7 +32,15 @@ export default function Leaderboard({ onBack }: { onBack: () => void }) {
         } catch {
             return [];
         }
-    }, []);
+    };
+
+    const [data, setData] = useState<Entry[]>(loadData);
+
+    const handleReset = () => {
+        localStorage.removeItem('leaderboardARTIFICIAL INTELLIGENCE');
+        setData([]);
+        setResetConfirm(false);
+    };
 
     const top10 = data.slice(0, 10);
     const totalEntries = data.length;
@@ -169,15 +177,15 @@ export default function Leaderboard({ onBack }: { onBack: () => void }) {
                                     <div
                                         key={index}
                                         className={`flex items-center justify-between px-6 py-3.5 transition-colors ${index === 0 ? 'bg-[#FFFBEB]' :
-                                                index === 1 ? 'bg-[#F8FAFC]' :
-                                                    index === 2 ? 'bg-[#FFF7ED]' : ''
+                                            index === 1 ? 'bg-[#F8FAFC]' :
+                                                index === 2 ? 'bg-[#FFF7ED]' : ''
                                             }`}
                                     >
                                         <div className="flex items-center gap-3">
                                             <span className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm ${index === 0 ? 'bg-[#F59E0B] text-white' :
-                                                    index === 1 ? 'bg-[#94A3B8] text-white' :
-                                                        index === 2 ? 'bg-[#D97706] text-white' :
-                                                            'bg-[#F1F5F9] text-[#94A3B8]'
+                                                index === 1 ? 'bg-[#94A3B8] text-white' :
+                                                    index === 2 ? 'bg-[#D97706] text-white' :
+                                                        'bg-[#F1F5F9] text-[#94A3B8]'
                                                 }`}>
                                                 {index + 1}
                                             </span>
@@ -268,8 +276,8 @@ export default function Leaderboard({ onBack }: { onBack: () => void }) {
                                                     animate={{ width: `${q.rate}%` }}
                                                     transition={{ duration: 0.8, delay: 0.1 }}
                                                     className={`h-full rounded-full flex items-center justify-end pr-2 ${q.rate >= 80 ? 'bg-[#22C55E]' :
-                                                            q.rate >= 50 ? 'bg-[#F59E0B]' :
-                                                                'bg-[#DC2626]'
+                                                        q.rate >= 50 ? 'bg-[#F59E0B]' :
+                                                            'bg-[#DC2626]'
                                                         }`}
                                                 >
                                                     {q.rate > 15 && (
@@ -317,13 +325,39 @@ export default function Leaderboard({ onBack }: { onBack: () => void }) {
                         </div>
 
                         {/* Footer */}
-                        <div className="flex justify-center pb-4">
-                            <button
-                                onClick={onBack}
-                                className="px-6 py-2.5 bg-white text-[#0F172A] font-bold rounded-xl text-xs uppercase tracking-widest shadow-lg border border-[#E2E8F0] hover:bg-[#F8FAFC] transition-colors"
-                            >
-                                ← Back to Start
-                            </button>
+                        <div className="flex flex-col items-center gap-3 pb-4">
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={onBack}
+                                    className="px-6 py-2.5 bg-white text-[#0F172A] font-bold rounded-xl text-xs uppercase tracking-widest shadow-lg border border-[#E2E8F0] hover:bg-[#F8FAFC] transition-colors"
+                                >
+                                    ← Back to Start
+                                </button>
+                                {!resetConfirm ? (
+                                    <button
+                                        onClick={() => setResetConfirm(true)}
+                                        className="px-6 py-2.5 bg-[#DC2626] text-white font-bold rounded-xl text-xs uppercase tracking-widest shadow-lg hover:bg-[#B91C1C] transition-colors"
+                                    >
+                                        🗑 Reset Data
+                                    </button>
+                                ) : (
+                                    <div className="flex items-center gap-2 bg-[#FEF2F2] border border-[#FECACA] rounded-xl px-4 py-2">
+                                        <span className="text-xs text-[#DC2626] font-bold">Are you sure?</span>
+                                        <button
+                                            onClick={handleReset}
+                                            className="px-3 py-1 bg-[#DC2626] text-white text-xs font-bold rounded-lg hover:bg-[#B91C1C] transition-colors"
+                                        >
+                                            Yes, Reset
+                                        </button>
+                                        <button
+                                            onClick={() => setResetConfirm(false)}
+                                            className="px-3 py-1 bg-[#F1F5F9] text-[#64748B] text-xs font-bold rounded-lg hover:bg-[#E2E8F0] transition-colors"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 )}

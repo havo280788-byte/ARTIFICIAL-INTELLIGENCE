@@ -7,6 +7,7 @@ import GameOver from './components/GameOver';
 import GameWin from './components/GameWin';
 import Leaderboard from './components/Leaderboard';
 import ReviewMode from './components/ReviewMode';
+import WaitingScreen from './components/WaitingScreen';
 import { STAGES, getRandomQuestions, Question } from './utils/gameData';
 
 export type AnswerRecord = {
@@ -18,7 +19,7 @@ export type AnswerRecord = {
 };
 
 export default function App() {
-  const [screen, setScreen] = useState<'login' | 'game' | 'gameover' | 'win' | 'leaderboard' | 'review'>('login');
+  const [screen, setScreen] = useState<'login' | 'game' | 'gameover' | 'win' | 'leaderboard' | 'review' | 'waiting'>('login');
   const [player, setPlayer] = useState({ name: '', className: '' });
   const [currentStage, setCurrentStage] = useState(0);
   const [timeLeft, setTimeLeft] = useState(8 * 60);
@@ -189,10 +190,18 @@ export default function App() {
               score={score}
               totalQuestions={STAGES.length}
               elapsedSeconds={elapsedSeconds}
+              mode={mode}
               onRestart={() => setScreen('login')}
               onLeaderboard={() => setScreen('leaderboard')}
               onReview={() => setScreen('review')}
+              onWaiting={() => setScreen('waiting')}
             />
+          </motion.div>
+        )}
+
+        {screen === 'waiting' && (
+          <motion.div key="waiting" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <WaitingScreen />
           </motion.div>
         )}
 
