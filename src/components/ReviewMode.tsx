@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Question, READING_PASSAGE, QUESTIONS } from '../utils/gameData';
 import { AnswerRecord } from '../App';
 import { db } from '../utils/firebase';
@@ -22,13 +22,32 @@ interface ReviewModeProps {
     onBack: () => void;
 }
 
+const passagePanelStyle: React.CSSProperties = {
+    background: 'rgba(10,15,30,0.85)',
+    border: '1px solid rgba(255,255,255,0.08)',
+    borderRadius: '20px',
+    overflow: 'hidden',
+    backdropFilter: 'blur(12px)',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+};
+
+const questionPanelStyle: React.CSSProperties = {
+    background: 'rgba(10,15,30,0.85)',
+    border: '1px solid rgba(255,255,255,0.08)',
+    borderRadius: '20px',
+    overflow: 'hidden',
+    backdropFilter: 'blur(12px)',
+};
+
 export default function ReviewMode({ answers, questions, onBack }: ReviewModeProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [selectedStudent, setSelectedStudent] = useState(0);
     const [studentEntries, setStudentEntries] = useState<LeaderboardEntry[]>([]);
     const [loading, setLoading] = useState(true);
 
-    // Load student submissions from Firestore for teacher use
+    // If student review (answers already provided), skip firestore load
     useEffect(() => {
         if (answers.length > 0) {
             setLoading(false);
@@ -55,12 +74,32 @@ export default function ReviewMode({ answers, questions, onBack }: ReviewModePro
         : answers;
     const activeQuestions = questions.length > 0 ? questions : QUESTIONS;
 
+    const formatTime = (seconds: number) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    const getHighlightedPassage = (answer: AnswerRecord, question: Question | undefined) => {
+        if (!question) return null;
+        const paragraphs = READING_PASSAGE.split('\n\n');
+        const qLower = question.question.toLowerCase();
+
+        let relIdx = -1;
+        if (qLower.includes('paragraph 1') || qLower.includes('what can ai do')) relIdx = 0;
+        else if (qLower.includes('paragraph 2') || qLower.includes('"them"') || qLower.includes('robot') || qLower.includes('rescue') || qLower.includes('factory')) relIdx = 1;
+        else if (qLower.includes('paragraph 3') || qLower.includes('digital assistant') || qLower.includes('navigation') || qLower.includes('diet') || qLower.includes('personal habits')) relIdx = 2;
+        else if (qLower.includes('last paragraph') || qLower.includes('inferred')) relIdx = 3;
+
+        return paragraphs.map((p, i) => ({ text: p, highlighted: i === relIdx }));
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen animated-gradient-bg flex items-center justify-center">
-                <div className="text-white text-center">
+                <div className="text-center">
                     <div className="text-4xl mb-4 animate-pulse">⏳</div>
-                    <p className="text-sm text-[#94A3B8]">Loading student data...</p>
+                    <p className="text-sm" style={{ color: '#64748B' }}>Loading review...</p>
                 </div>
             </div>
         );
@@ -69,11 +108,15 @@ export default function ReviewMode({ answers, questions, onBack }: ReviewModePro
     if (activeAnswers.length === 0) {
         return (
             <div className="min-h-screen animated-gradient-bg flex items-center justify-center p-4">
-                <div className="bg-white rounded-2xl p-8 text-center max-w-md">
+                <div className="glass-card p-10 text-center max-w-sm">
                     <div className="text-5xl mb-4">📭</div>
-                    <p className="text-[#64748B] mb-2 font-bold">No answers to review.</p>
-                    <p className="text-[#94A3B8] text-sm mb-6">No student submissions found yet.</p>
-                    <button onClick={onBack} className="px-6 py-3 bg-[#0F172A] text-white font-bold rounded-xl">
+                    <p className="font-bold mb-2" style={{ color: '#CBD5E1' }}>No answers to review.</p>
+                    <p className="text-sm mb-6" style={{ color: '#475569' }}>No student submissions found yet.</p>
+                    <button
+                        onClick={onBack}
+                        className="px-6 py-3 rounded-xl font-bold text-sm uppercase tracking-widest text-white"
+                        style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)' }}
+                    >
                         ← Back
                     </button>
                 </div>
@@ -83,74 +126,105 @@ export default function ReviewMode({ answers, questions, onBack }: ReviewModePro
 
     const answer = activeAnswers[currentIndex];
     const question = activeQuestions.find(q => q.id === answer.questionId);
+    const paragraphs = getHighlightedPassage(answer, question);
 
-    const getHighlightedPassage = () => {
-        if (!question) return READING_PASSAGE;
-
-        const passageParagraphs = READING_PASSAGE.split('\n\n');
-        const questionLower = question.question.toLowerCase();
-
-        let relevantParagraphIndex = -1;
-        if (questionLower.includes('paragraph 1') || questionLower.includes('what can ai do')) {
-            relevantParagraphIndex = 0;
-        } else if (questionLower.includes('paragraph 2') || questionLower.includes('"them"') || questionLower.includes('robot') || questionLower.includes('rescue') || questionLower.includes('factory') || questionLower.includes('industrial')) {
-            relevantParagraphIndex = 1;
-        } else if (questionLower.includes('paragraph 3') || questionLower.includes('digital assistant') || questionLower.includes('navigation') || questionLower.includes('diet') || questionLower.includes('gadget') || questionLower.includes('personal habits')) {
-            relevantParagraphIndex = 2;
-        } else if (questionLower.includes('last paragraph') || questionLower.includes('inferred')) {
-            relevantParagraphIndex = 3;
-        }
-
-        return passageParagraphs.map((p, i) => ({
-            text: p,
-            highlighted: i === relevantParagraphIndex
-        }));
-    };
-
-    const highlightedParagraphs = getHighlightedPassage();
-
-    const formatTime = (seconds: number) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    };
+    const totalCorrect = activeAnswers.filter(a => a.isCorrect).length;
+    const accuracy = Math.round((totalCorrect / activeAnswers.length) * 100);
 
     return (
-        <div className="min-h-screen bg-[#0F172A] flex flex-col">
-            {/* Header */}
-            <div className="bg-[#0F172A] text-white px-4 py-3 flex flex-col gap-2 border-b border-[#1E293B]">
+        <div className="min-h-screen flex flex-col" style={{ background: '#020818' }}>
+            {/* ===== Header ===== */}
+            <div
+                className="text-white px-4 py-3 flex flex-col gap-2 shrink-0"
+                style={{
+                    background: 'linear-gradient(180deg, #020818 0%, #0A0F1E 100%)',
+                    borderBottom: '1px solid rgba(255,255,255,0.06)',
+                }}
+            >
                 <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                        <span className="text-xl">📖</span>
-                        <h1 className="text-sm font-bold uppercase tracking-wider">Review Mode</h1>
+                    <div className="flex items-center gap-2.5">
+                        <div
+                            className="w-8 h-8 rounded-lg flex items-center justify-center text-sm"
+                            style={{ background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.2)' }}
+                        >
+                            🔍
+                        </div>
+                        <div>
+                            <h1 className="text-sm font-bold uppercase tracking-wider" style={{ color: '#CBD5E1' }}>
+                                Review Answers
+                            </h1>
+                            <p className="text-[10px] uppercase tracking-widest" style={{ color: '#334155' }}>
+                                Read-only · AI Reading Challenge
+                            </p>
+                        </div>
                     </div>
+
                     <div className="flex items-center gap-3">
-                        <span className="text-xs text-[#94A3B8]">
-                            Question {currentIndex + 1} of {activeAnswers.length}
+                        {/* Score summary */}
+                        <div
+                            className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full"
+                            style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+                        >
+                            <span className="text-xs font-bold" style={{ color: '#22D3EE' }}>{totalCorrect}/{activeAnswers.length}</span>
+                            <span className="text-[10px]" style={{ color: '#334155' }}>correct</span>
+                            <span className="text-xs font-bold" style={{ color: '#64748B' }}>{accuracy}%</span>
+                        </div>
+                        <span className="text-[11px]" style={{ color: '#334155' }}>
+                            {currentIndex + 1} / {activeAnswers.length}
                         </span>
                         <button
                             onClick={onBack}
-                            className="px-3 py-1.5 bg-[#1E293B] text-white text-xs font-bold rounded-lg border border-[#334155] hover:bg-[#334155] transition-colors"
+                            className="px-3 py-1.5 text-xs font-bold rounded-lg uppercase tracking-wider transition-all"
+                            style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: '#64748B' }}
+                            onMouseEnter={e => { e.currentTarget.style.color = '#94A3B8'; e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
+                            onMouseLeave={e => { e.currentTarget.style.color = '#64748B'; e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}
                         >
                             ✕ Close
                         </button>
                     </div>
                 </div>
 
-                {/* Student picker (teacher view only) */}
+                {/* Question progress dots */}
+                <div className="flex gap-1 flex-wrap">
+                    {activeAnswers.map((a, i) => (
+                        <button
+                            key={i}
+                            onClick={() => setCurrentIndex(i)}
+                            className="w-5 h-5 rounded-full text-[9px] font-bold flex items-center justify-center transition-all"
+                            style={{
+                                background: i === currentIndex
+                                    ? 'rgba(99,102,241,0.8)'
+                                    : a.isCorrect
+                                        ? 'rgba(16,185,129,0.3)'
+                                        : 'rgba(220,38,38,0.3)',
+                                border: i === currentIndex
+                                    ? '1px solid #6366F1'
+                                    : a.isCorrect
+                                        ? '1px solid rgba(16,185,129,0.4)'
+                                        : '1px solid rgba(220,38,38,0.4)',
+                                color: i === currentIndex ? '#fff' : a.isCorrect ? '#6EE7B7' : '#FCA5A5',
+                            }}
+                        >
+                            {i + 1}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Teacher: student picker */}
                 {isTeacherView && studentEntries.length > 0 && (
-                    <div className="flex items-center gap-2 bg-[#1E293B] rounded-lg px-3 py-2 border border-[#334155]">
-                        <span className="text-xs text-[#94A3B8] whitespace-nowrap">👤 Student:</span>
+                    <div
+                        className="flex items-center gap-2 rounded-lg px-3 py-2"
+                        style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+                    >
+                        <span className="text-xs whitespace-nowrap" style={{ color: '#475569' }}>👤 Student:</span>
                         <select
                             value={selectedStudent}
-                            onChange={(e) => {
-                                setSelectedStudent(Number(e.target.value));
-                                setCurrentIndex(0);
-                            }}
-                            className="flex-1 bg-transparent text-white text-sm font-bold border-none outline-none cursor-pointer"
+                            onChange={e => { setSelectedStudent(Number(e.target.value)); setCurrentIndex(0); }}
+                            className="flex-1 bg-transparent text-sm font-bold border-none outline-none cursor-pointer"
+                            style={{ color: '#CBD5E1' }}
                         >
                             {studentEntries.map((entry, idx) => (
-                                <option key={idx} value={idx} className="bg-[#0F172A] text-white">
+                                <option key={idx} value={idx} className="bg-[#0A0F1E] text-white">
                                     {entry.name} ({entry.class}) — {entry.score}/{entry.totalQuestions} — {formatTime(entry.time)}
                                 </option>
                             ))}
@@ -159,121 +233,213 @@ export default function ReviewMode({ answers, questions, onBack }: ReviewModePro
                 )}
             </div>
 
-            {/* Body */}
-            <div className="flex-1 p-3 md:p-5">
-                <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-4 md:gap-5">
-                    {/* LEFT: Reading with highlighting */}
-                    <div className="w-full md:w-[40%] flex-shrink-0">
-                        <div className="bg-white rounded-2xl shadow-md border border-[#E2E8F0] overflow-hidden h-full flex flex-col">
-                            <div className="px-5 py-3 border-b border-[#F1F5F9] flex items-center gap-2">
-                                <span className="text-base">📖</span>
-                                <span className="text-xs font-bold text-[#64748B] uppercase tracking-wider">Reading Passage</span>
-                                <span className="ml-auto text-[10px] text-[#22D3EE] bg-[#22D3EE]/10 px-2 py-0.5 rounded-full font-bold">Evidence highlighted</span>
-                            </div>
-                            <div className="p-5 overflow-y-auto reading-scroll flex-1" style={{ maxHeight: '65vh' }}>
-                                <h3 className="text-sm font-bold text-[#0F172A] mb-3 uppercase tracking-wide">AI All Around Us</h3>
-                                {Array.isArray(highlightedParagraphs) ? (
-                                    highlightedParagraphs.map((p, i) => (
-                                        <p
-                                            key={i}
-                                            className={`text-sm leading-relaxed mb-4 rounded-lg transition-all ${p.highlighted
-                                                ? 'bg-[#FEF3C7] border-l-4 border-[#F59E0B] pl-3 py-2 text-[#0F172A] font-medium'
-                                                : 'text-[#64748B]'
-                                                }`}
-                                            style={{ lineHeight: '1.6' }}
+            {/* ===== Body ===== */}
+            <div className="flex-1 p-3 md:p-5 overflow-auto">
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={currentIndex}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        transition={{ duration: 0.2 }}
+                        className="max-w-6xl mx-auto flex flex-col md:flex-row gap-4 md:gap-5 h-full"
+                    >
+                        {/* LEFT: Reading Passage */}
+                        <div className="w-full md:w-[40%] flex-shrink-0">
+                            <div style={passagePanelStyle}>
+                                {/* Cyan top accent */}
+                                <div style={{ height: '2px', background: 'linear-gradient(90deg, #22D3EE, #6366F1)', flexShrink: 0 }} />
+                                <div
+                                    className="px-5 py-3 flex items-center gap-2"
+                                    style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', flexShrink: 0 }}
+                                >
+                                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#22D3EE" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                    </svg>
+                                    <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: '#22D3EE' }}>
+                                        Reading Passage
+                                    </span>
+                                    {paragraphs?.some(p => p.highlighted) && (
+                                        <span
+                                            className="ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded-full"
+                                            style={{ background: 'rgba(245,158,11,0.12)', color: '#F59E0B', border: '1px solid rgba(245,158,11,0.2)' }}
                                         >
-                                            {p.text}
-                                        </p>
-                                    ))
-                                ) : (
-                                    <p className="text-sm text-[#334155] leading-relaxed whitespace-pre-line" style={{ lineHeight: '1.6' }}>
-                                        {READING_PASSAGE}
-                                    </p>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* RIGHT: Question + Answer review */}
-                    <div className="w-full md:w-[60%]">
-                        <div className="bg-white rounded-2xl shadow-md border border-[#E2E8F0] overflow-hidden">
-                            {/* Question header */}
-                            <div className="px-5 py-3 border-b border-[#F1F5F9] flex items-center justify-between">
-                                <span className="text-xs font-bold text-[#22D3EE] bg-[#22D3EE]/10 px-3 py-1 rounded-full uppercase tracking-wider">
-                                    Stage {currentIndex + 1}
-                                </span>
-                                <span className={`text-xs font-bold px-3 py-1 rounded-full ${answer.isCorrect ? 'bg-[#22C55E]/10 text-[#22C55E]' : 'bg-[#DC2626]/10 text-[#DC2626]'
-                                    }`}>
-                                    {answer.isCorrect ? '✅ Correct' : '❌ Incorrect'}
-                                </span>
-                            </div>
-
-                            <div className="p-5 md:p-6 space-y-4">
-                                <h2 className="text-base md:text-lg font-bold text-[#0F172A] leading-snug">
-                                    {answer.question}
-                                </h2>
-
-                                {/* Options */}
-                                <div className="space-y-2.5">
-                                    {question?.options?.map((option, idx) => {
-                                        const isCorrectOption = option === answer.correctAnswer;
-                                        const wasSelected = option === answer.selectedAnswer;
-                                        const isWrongSelection = wasSelected && !answer.isCorrect;
-
-                                        let style = 'bg-[#F9FAFB] border-[#E2E8F0] text-[#94A3B8]';
-                                        if (isCorrectOption) {
-                                            style = 'bg-[#22C55E]/10 border-[#22C55E] text-[#22C55E] font-semibold';
-                                        }
-                                        if (isWrongSelection) {
-                                            style = 'bg-[#DC2626]/10 border-[#DC2626] text-[#DC2626] line-through';
-                                        }
-
-                                        return (
-                                            <div
-                                                key={idx}
-                                                className={`w-full p-3.5 rounded-xl border-2 text-left text-sm ${style}`}
+                                            Evidence highlighted
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="p-5 overflow-y-auto reading-scroll flex-1" style={{ maxHeight: '65vh' }}>
+                                    <h3 className="text-sm font-bold mb-3 uppercase tracking-wide" style={{ color: '#22D3EE' }}>
+                                        AI All Around Us
+                                    </h3>
+                                    {paragraphs ? (
+                                        paragraphs.map((p, i) => (
+                                            <p
+                                                key={i}
+                                                className="text-sm leading-relaxed mb-4 rounded-lg transition-all"
+                                                style={{
+                                                    lineHeight: '1.75',
+                                                    ...(p.highlighted ? {
+                                                        background: 'rgba(245,158,11,0.08)',
+                                                        borderLeft: '3px solid rgba(245,158,11,0.5)',
+                                                        paddingLeft: '12px',
+                                                        paddingTop: '8px',
+                                                        paddingBottom: '8px',
+                                                        color: '#CBD5E1',
+                                                    } : {
+                                                        color: '#475569',
+                                                    })
+                                                }}
                                             >
-                                                <div className="flex items-center">
-                                                    <span className={`w-7 h-7 rounded-full flex items-center justify-center mr-3 text-xs font-bold shrink-0 ${isCorrectOption ? 'bg-[#22C55E] text-white' :
-                                                        isWrongSelection ? 'bg-[#DC2626] text-white' :
-                                                            'bg-[#E2E8F0] text-[#94A3B8]'
-                                                        }`}>
-                                                        {isCorrectOption ? '✓' : isWrongSelection ? '✕' : String.fromCharCode(65 + idx)}
-                                                    </span>
-                                                    <span>{option}</span>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
+                                                {p.text}
+                                            </p>
+                                        ))
+                                    ) : (
+                                        <p className="text-sm leading-relaxed whitespace-pre-line" style={{ color: '#475569', lineHeight: '1.75' }}>
+                                            {READING_PASSAGE}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
+                        </div>
 
-                            {/* Navigation */}
-                            <div className="px-5 pb-5 flex gap-3">
-                                <button
-                                    onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
-                                    disabled={currentIndex === 0}
-                                    className={`flex-1 py-3 rounded-xl font-bold text-sm uppercase tracking-widest transition-colors ${currentIndex === 0
-                                        ? 'bg-[#F1F5F9] text-[#CBD5E1] cursor-not-allowed'
-                                        : 'bg-[#F8FAFC] text-[#334155] border border-[#E2E8F0] hover:bg-[#F1F5F9]'
-                                        }`}
+                        {/* RIGHT: Question + Read-only Answer Review */}
+                        <div className="w-full md:w-[60%]">
+                            <div style={questionPanelStyle}>
+                                {/* Header */}
+                                <div
+                                    className="px-5 py-3 flex items-center justify-between"
+                                    style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
                                 >
-                                    ← Previous
-                                </button>
-                                <button
-                                    onClick={() => setCurrentIndex(prev => Math.min(activeAnswers.length - 1, prev + 1))}
-                                    disabled={currentIndex === activeAnswers.length - 1}
-                                    className={`flex-1 py-3 rounded-xl font-bold text-sm uppercase tracking-widest transition-colors ${currentIndex === activeAnswers.length - 1
-                                        ? 'bg-[#F1F5F9] text-[#CBD5E1] cursor-not-allowed'
-                                        : 'bg-[#0F172A] text-white hover:bg-[#1E293B]'
-                                        }`}
-                                >
-                                    Next →
-                                </button>
+                                    <span
+                                        className="text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider"
+                                        style={{ background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.25)', color: '#A5B4FC' }}
+                                    >
+                                        Stage {currentIndex + 1}
+                                    </span>
+                                    <span
+                                        className="text-[11px] font-bold px-3 py-1 rounded-full"
+                                        style={answer.isCorrect ? {
+                                            background: 'rgba(16,185,129,0.12)',
+                                            border: '1px solid rgba(16,185,129,0.3)',
+                                            color: '#6EE7B7',
+                                        } : {
+                                            background: 'rgba(220,38,38,0.1)',
+                                            border: '1px solid rgba(220,38,38,0.3)',
+                                            color: '#F87171',
+                                        }}
+                                    >
+                                        {answer.isCorrect ? '✓ Correct' : '✕ Incorrect'}
+                                    </span>
+                                </div>
+
+                                <div className="p-5 md:p-6 space-y-4">
+                                    {/* Question text */}
+                                    <h2 className="text-base md:text-lg font-bold leading-snug" style={{ color: '#F1F5F9' }}>
+                                        {answer.question}
+                                    </h2>
+
+                                    {/* Options — read-only */}
+                                    <div className="space-y-2">
+                                        {question?.options?.map((option, idx) => {
+                                            const isCorrectOption = option === answer.correctAnswer;
+                                            const wasSelected = option === answer.selectedAnswer;
+                                            const isWrongSelection = wasSelected && !answer.isCorrect;
+
+                                            let style: React.CSSProperties;
+                                            if (isCorrectOption) {
+                                                style = {
+                                                    background: 'rgba(16,185,129,0.1)',
+                                                    border: '1.5px solid rgba(16,185,129,0.45)',
+                                                    color: '#6EE7B7',
+                                                };
+                                            } else if (isWrongSelection) {
+                                                style = {
+                                                    background: 'rgba(220,38,38,0.08)',
+                                                    border: '1.5px solid rgba(220,38,38,0.4)',
+                                                    color: '#FCA5A5',
+                                                };
+                                            } else {
+                                                style = {
+                                                    background: 'rgba(255,255,255,0.02)',
+                                                    border: '1.5px solid rgba(255,255,255,0.05)',
+                                                    color: '#334155',
+                                                };
+                                            }
+
+                                            const badgeStyle: React.CSSProperties = isCorrectOption
+                                                ? { background: 'rgba(16,185,129,0.25)', color: '#6EE7B7' }
+                                                : isWrongSelection
+                                                    ? { background: 'rgba(220,38,38,0.2)', color: '#FCA5A5' }
+                                                    : { background: 'rgba(255,255,255,0.04)', color: '#334155' };
+
+                                            return (
+                                                <div
+                                                    key={idx}
+                                                    className="w-full p-3.5 rounded-xl text-left text-sm flex items-center gap-3"
+                                                    style={{ ...style, cursor: 'default' }}
+                                                >
+                                                    <span
+                                                        className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0"
+                                                        style={badgeStyle}
+                                                    >
+                                                        {isCorrectOption ? '✓' : isWrongSelection ? '✕' : String.fromCharCode(65 + idx)}
+                                                    </span>
+                                                    <span style={{ fontWeight: isCorrectOption ? 600 : 400 }}>{option}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                                {/* Navigation */}
+                                <div className="px-5 pb-5 flex gap-3">
+                                    <button
+                                        onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
+                                        disabled={currentIndex === 0}
+                                        className="flex-1 py-3 rounded-xl font-bold text-sm uppercase tracking-widest transition-all"
+                                        style={currentIndex === 0 ? {
+                                            background: 'rgba(255,255,255,0.02)',
+                                            color: '#1E293B',
+                                            cursor: 'not-allowed',
+                                            border: '1px solid rgba(255,255,255,0.04)',
+                                        } : {
+                                            background: 'rgba(255,255,255,0.05)',
+                                            color: '#64748B',
+                                            border: '1px solid rgba(255,255,255,0.1)',
+                                            cursor: 'pointer',
+                                        }}
+                                        onMouseEnter={e => { if (currentIndex > 0) { e.currentTarget.style.background = 'rgba(255,255,255,0.09)'; e.currentTarget.style.color = '#94A3B8'; } }}
+                                        onMouseLeave={e => { if (currentIndex > 0) { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = '#64748B'; } }}
+                                    >
+                                        ← Previous
+                                    </button>
+                                    <button
+                                        onClick={() => setCurrentIndex(prev => Math.min(activeAnswers.length - 1, prev + 1))}
+                                        disabled={currentIndex === activeAnswers.length - 1}
+                                        className="flex-1 py-3 rounded-xl font-bold text-sm uppercase tracking-widest transition-all"
+                                        style={currentIndex === activeAnswers.length - 1 ? {
+                                            background: 'rgba(255,255,255,0.02)',
+                                            color: '#1E293B',
+                                            cursor: 'not-allowed',
+                                            border: '1px solid rgba(255,255,255,0.04)',
+                                        } : {
+                                            background: 'linear-gradient(135deg, #06B6D4, #6366F1)',
+                                            color: '#fff',
+                                            boxShadow: '0 4px 16px rgba(99,102,241,0.35)',
+                                            cursor: 'pointer',
+                                            border: 'none',
+                                        }}
+                                        onMouseEnter={e => { if (currentIndex < activeAnswers.length - 1) { e.currentTarget.style.boxShadow = '0 6px 24px rgba(99,102,241,0.5)'; e.currentTarget.style.transform = 'scale(1.01)'; } }}
+                                        onMouseLeave={e => { if (currentIndex < activeAnswers.length - 1) { e.currentTarget.style.boxShadow = '0 4px 16px rgba(99,102,241,0.35)'; e.currentTarget.style.transform = 'scale(1)'; } }}
+                                    >
+                                        Next →
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </motion.div>
+                </AnimatePresence>
             </div>
         </div>
     );
