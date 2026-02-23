@@ -5,7 +5,7 @@ import { STAGES } from '../utils/gameData';
 
 interface GameHeaderProps {
     currentStage: number;
-    timeLeft: number; // in seconds
+    timeLeft: number;
     mode: 'student' | 'teacher';
     onShowLeaderboard?: () => void;
     onShowReview?: () => void;
@@ -18,9 +18,9 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     };
 
+    const isWarning = timeLeft <= 60;
     const containerRef = useRef<HTMLDivElement>(null);
 
-    // Auto-scroll to current stage on mobile
     useEffect(() => {
         if (containerRef.current) {
             const activeElement = containerRef.current.children[currentStage] as HTMLElement;
@@ -37,41 +37,87 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
     }, [currentStage]);
 
     return (
-        <div className="w-full bg-[#0F172A] text-white px-4 py-3 md:px-6 md:py-4 shadow-2xl flex flex-col gap-3">
-            {/* Top Row: Title + Timer/Teacher badge */}
+        <div
+            className="w-full text-white px-4 py-3 md:px-6 md:py-4 flex flex-col gap-3"
+            style={{
+                background: 'linear-gradient(180deg, #020818 0%, #0A0F1E 100%)',
+                borderBottom: '1px solid rgba(34,211,238,0.08)',
+                boxShadow: '0 4px 32px rgba(0,0,0,0.6)',
+            }}
+        >
+            {/* Top Row */}
             <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                    <span className="text-2xl md:text-3xl">🤖</span>
+                {/* Left: Branding */}
+                <div className="flex items-center gap-2.5">
+                    <div
+                        className="w-9 h-9 rounded-xl flex items-center justify-center text-xl shrink-0"
+                        style={{
+                            background: 'rgba(34,211,238,0.08)',
+                            border: '1px solid rgba(34,211,238,0.2)',
+                            boxShadow: '0 0 12px rgba(34,211,238,0.2)',
+                        }}
+                    >
+                        🤖
+                    </div>
                     <div>
-                        <h1 className="text-sm md:text-lg font-black uppercase tracking-tight text-white leading-tight">
-                            <span className="text-[#22D3EE]">AI</span> – English 12
+                        <h1 className="text-sm md:text-base font-black uppercase tracking-tight leading-tight">
+                            <span style={{ color: '#22D3EE' }}>AI</span>
+                            <span className="text-[#CBD5E1]"> – English 12</span>
                         </h1>
-                        <p className="text-[10px] md:text-xs text-[#94A3B8] uppercase tracking-widest hidden md:block">
+                        <p className="text-[10px] text-[#334155] uppercase tracking-widest hidden md:block font-semibold">
                             Reading Challenge
                         </p>
                     </div>
                 </div>
 
+                {/* Right: Timer or Teacher badge */}
                 <div className="flex items-center gap-2">
                     {mode === 'student' ? (
-                        /* Student: Timer */
-                        <div className="flex items-center gap-2 bg-[#1E293B] px-3 py-1.5 rounded-full border border-[#334155]">
-                            <span className="text-base text-[#22D3EE]">⏱</span>
-                            <span className="font-mono text-lg md:text-xl font-bold tracking-wider">{formatTime(timeLeft)}</span>
-                        </div>
+                        <motion.div
+                            animate={isWarning ? { scale: [1, 1.04, 1] } : {}}
+                            transition={{ duration: 0.8, repeat: Infinity }}
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-full"
+                            style={{
+                                background: isWarning ? 'rgba(220,38,38,0.1)' : 'rgba(34,211,238,0.06)',
+                                border: isWarning ? '1px solid rgba(220,38,38,0.3)' : '1px solid rgba(34,211,238,0.15)',
+                                boxShadow: isWarning ? '0 0 12px rgba(220,38,38,0.2)' : 'none',
+                            }}
+                        >
+                            <span className="text-sm" style={{ color: isWarning ? '#F87171' : '#22D3EE' }}>⏱</span>
+                            <span
+                                className="font-mono text-lg md:text-xl font-bold tracking-wider"
+                                style={{ color: isWarning ? '#F87171' : '#F1F5F9' }}
+                            >
+                                {formatTime(timeLeft)}
+                            </span>
+                        </motion.div>
                     ) : (
-                        /* Teacher: Mode badge + controls */
-                        <div className="flex items-center gap-2">
-                            <div className="flex items-center gap-1.5 bg-[#064E3B] px-3 py-1.5 rounded-full border border-[#10B981]/30">
+                        <div className="flex items-center gap-1.5">
+                            <div
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full teacher-badge"
+                                style={{
+                                    background: 'rgba(16,185,129,0.08)',
+                                    border: '1px solid rgba(16,185,129,0.25)',
+                                }}
+                            >
                                 <span className="text-sm">🟢</span>
-                                <span className="text-xs font-bold text-[#6EE7B7] uppercase tracking-wider whitespace-nowrap">Teacher Mode</span>
+                                <span className="text-xs font-bold text-[#6EE7B7] uppercase tracking-wider whitespace-nowrap">
+                                    Teacher Mode
+                                </span>
                             </div>
-                            {/* Teacher-only quick actions */}
+                            {/* Teacher quick actions */}
                             <div className="hidden md:flex items-center gap-1.5">
                                 {onShowReview && (
                                     <button
                                         onClick={onShowReview}
-                                        className="px-2.5 py-1 bg-[#1E293B] text-[#94A3B8] text-[10px] font-bold rounded-lg border border-[#334155] hover:bg-[#334155] hover:text-white transition-colors uppercase tracking-wider"
+                                        className="px-2.5 py-1 text-[10px] font-bold rounded-lg uppercase tracking-wider transition-all duration-150"
+                                        style={{
+                                            background: 'rgba(255,255,255,0.04)',
+                                            border: '1px solid rgba(255,255,255,0.08)',
+                                            color: '#64748B',
+                                        }}
+                                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.12)'; e.currentTarget.style.borderColor = 'rgba(99,102,241,0.3)'; e.currentTarget.style.color = '#A5B4FC'; }}
+                                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = '#64748B'; }}
                                     >
                                         Review
                                     </button>
@@ -79,7 +125,14 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                                 {onShowLeaderboard && (
                                     <button
                                         onClick={onShowLeaderboard}
-                                        className="px-2.5 py-1 bg-[#1E293B] text-[#94A3B8] text-[10px] font-bold rounded-lg border border-[#334155] hover:bg-[#334155] hover:text-white transition-colors uppercase tracking-wider"
+                                        className="px-2.5 py-1 text-[10px] font-bold rounded-lg uppercase tracking-wider transition-all duration-150"
+                                        style={{
+                                            background: 'rgba(255,255,255,0.04)',
+                                            border: '1px solid rgba(255,255,255,0.08)',
+                                            color: '#64748B',
+                                        }}
+                                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.12)'; e.currentTarget.style.borderColor = 'rgba(99,102,241,0.3)'; e.currentTarget.style.color = '#A5B4FC'; }}
+                                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = '#64748B'; }}
                                     >
                                         Leaderboard
                                     </button>
@@ -90,18 +143,26 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                 </div>
             </div>
 
-            {/* Progress Bar Container */}
+            {/* Stage Progress Bar */}
             <div className="relative w-full max-w-4xl mx-auto overflow-hidden">
-                {/* Connection Line */}
-                <div className="absolute top-1/2 left-0 w-full h-0.5 bg-[#1E293B] -translate-y-1/2" />
+                {/* Background line */}
+                <div
+                    className="absolute top-1/2 left-0 w-full h-px -translate-y-1/2"
+                    style={{ background: 'rgba(255,255,255,0.06)' }}
+                />
+                {/* Progress line */}
                 <motion.div
-                    className="absolute top-1/2 left-0 h-0.5 bg-[#22D3EE] -translate-y-1/2"
+                    className="absolute top-1/2 left-0 h-px -translate-y-1/2"
+                    style={{
+                        background: 'linear-gradient(90deg, #22D3EE, #6366F1)',
+                        boxShadow: '0 0 8px rgba(34,211,238,0.5)',
+                    }}
                     initial={{ width: '0%' }}
                     animate={{ width: `${(currentStage / (STAGES.length - 1)) * 100}%` }}
                     transition={{ duration: 0.5 }}
                 />
 
-                {/* Icons Scroll Area */}
+                {/* Stage Icons */}
                 <div
                     ref={containerRef}
                     className="relative flex justify-between items-center w-full overflow-x-auto no-scrollbar py-2 px-1"
@@ -114,16 +175,35 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                             <motion.div
                                 key={stage.id}
                                 className="flex-shrink-0 flex items-center justify-center relative z-10 mx-1 md:mx-0"
-                                animate={{ scale: isActive ? 1.15 : 1 }}
-                                transition={{ type: 'spring', stiffness: 300 }}
+                                animate={{ scale: isActive ? 1.2 : 1 }}
+                                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                             >
+                                {isActive && (
+                                    <span
+                                        className="absolute inset-0 rounded-full border border-[#22D3EE]/50"
+                                        style={{
+                                            animation: 'pulseRing 2s ease-out infinite',
+                                            transform: 'scale(1.5)',
+                                        }}
+                                    />
+                                )}
                                 <div
-                                    className={`
-                                        w-7 h-7 md:w-9 md:h-9 rounded-full flex items-center justify-center text-sm md:text-lg transition-all duration-300 border-2
-                                        ${isActive ? 'bg-[#22D3EE] border-white icon-glow z-20' :
-                                            isCompleted ? 'bg-[#334155] border-[#22D3EE]/40 opacity-90' :
-                                                'bg-[#1E293B] border-[#334155] opacity-50'}
-                                    `}
+                                    className="w-7 h-7 md:w-9 md:h-9 rounded-full flex items-center justify-center text-sm md:text-lg border-2 transition-all duration-300 relative"
+                                    style={{
+                                        ...(isActive ? {
+                                            background: 'rgba(34,211,238,0.2)',
+                                            borderColor: '#22D3EE',
+                                            boxShadow: '0 0 12px rgba(34,211,238,0.8), 0 0 24px rgba(34,211,238,0.4)',
+                                        } : isCompleted ? {
+                                            background: 'rgba(99,102,241,0.15)',
+                                            borderColor: 'rgba(99,102,241,0.4)',
+                                            opacity: 0.85,
+                                        } : {
+                                            background: 'rgba(255,255,255,0.03)',
+                                            borderColor: 'rgba(255,255,255,0.06)',
+                                            opacity: 0.4,
+                                        })
+                                    }}
                                 >
                                     {stage.icon}
                                 </div>

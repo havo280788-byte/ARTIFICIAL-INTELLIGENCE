@@ -20,49 +20,27 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
     const [highlights, setHighlights] = useState<Array<{ text: string; start: number; end: number }>>([]);
     const [revealed, setRevealed] = useState(false);
 
-    // Reset state when question changes
     useEffect(() => {
         setSelected(null);
         setFeedback(null);
         setRevealed(false);
-        // Keep highlights across questions in teacher mode (teacher can clear manually)
     }, [question]);
 
     if (!question) return null;
 
-    // ---- Student Mode: Check Answer ----
     const handleCheck = () => {
         if (!selected) return;
-
-        if (selected === question.answer) {
-            setFeedback('correct');
-        } else {
-            setFeedback('incorrect');
-        }
+        setFeedback(selected === question.answer ? 'correct' : 'incorrect');
     };
 
-    // ---- Teacher Mode: Reveal ----
-    const handleReveal = () => {
-        setRevealed(true);
-    };
+    const handleReveal = () => setRevealed(true);
+    const handleHighlightToggle = () => setHighlightMode(prev => !prev);
+    const handleClearHighlights = () => setHighlights([]);
 
-    // ---- Teacher Mode: Toggle Highlight ----
-    const handleHighlightToggle = () => {
-        setHighlightMode(prev => !prev);
-    };
-
-    // ---- Teacher Mode: Clear Highlights ----
-    const handleClearHighlights = () => {
-        setHighlights([]);
-    };
-
-    // ---- Teacher Mode: Handle text selection for highlighting ----
     const handleTextSelect = useCallback(() => {
         if (!highlightMode || mode !== 'teacher') return;
-
         const selection = window.getSelection();
         if (!selection || selection.isCollapsed) return;
-
         const selectedText = selection.toString().trim();
         if (selectedText.length > 0) {
             setHighlights(prev => [...prev, { text: selectedText, start: 0, end: selectedText.length }]);
@@ -70,104 +48,190 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
         }
     }, [highlightMode, mode]);
 
-    // ---- Render highlighted passage ----
     const renderPassage = () => {
         if (mode === 'teacher' && highlights.length > 0) {
-            let passageText = READING_PASSAGE;
-            // Build highlighted version
             const parts: Array<{ text: string; highlighted: boolean }> = [];
-            let remaining = passageText;
-
+            let remaining = READING_PASSAGE;
             for (const h of highlights) {
                 const idx = remaining.indexOf(h.text);
                 if (idx !== -1) {
-                    if (idx > 0) {
-                        parts.push({ text: remaining.substring(0, idx), highlighted: false });
-                    }
+                    if (idx > 0) parts.push({ text: remaining.substring(0, idx), highlighted: false });
                     parts.push({ text: h.text, highlighted: true });
                     remaining = remaining.substring(idx + h.text.length);
                 }
             }
-            if (remaining.length > 0) {
-                parts.push({ text: remaining, highlighted: false });
-            }
-
+            if (remaining.length > 0) parts.push({ text: remaining, highlighted: false });
             if (parts.length > 0) {
                 return (
-                    <p className="text-sm md:text-lg text-[#334155] leading-relaxed" style={{ lineHeight: '1.6' }}>
+                    <p className="text-sm md:text-base leading-relaxed" style={{ color: '#94A3B8', lineHeight: '1.75' }}>
                         {parts.map((part, i) => (
-                            <span
-                                key={i}
-                                className={part.highlighted ? 'teacher-highlight' : ''}
-                            >
-                                {part.text}
-                            </span>
+                            <span key={i} className={part.highlighted ? 'teacher-highlight' : ''}>{part.text}</span>
                         ))}
                     </p>
                 );
             }
         }
-
         return (
-            <p className="text-sm md:text-lg text-[#334155] leading-relaxed whitespace-pre-line" style={{ lineHeight: '1.6' }}>
+            <p className="text-sm md:text-base leading-relaxed whitespace-pre-line" style={{ color: '#94A3B8', lineHeight: '1.75' }}>
                 {READING_PASSAGE}
             </p>
         );
     };
 
-    const getOptionStyle = (option: string) => {
-        const base = 'w-full p-3.5 md:p-4 rounded-xl border-2 text-left transition-all duration-200 font-medium text-sm md:text-lg';
+    /* ---- Answer Button Styling ---- */
+    const getOptionStyle = (option: string): React.CSSProperties => {
+        const base: React.CSSProperties = {
+            width: '100%',
+            padding: '14px 16px',
+            borderRadius: '14px',
+            border: '1.5px solid',
+            textAlign: 'left',
+            transition: 'all 0.2s cubic-bezier(0.4,0,0.2,1)',
+            fontWeight: 500,
+            fontSize: '14px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+        };
 
-        // Teacher Reveal: show correct answer
+        // Teacher reveal
         if (mode === 'teacher' && revealed && option === question.answer) {
-            return `${base} bg-[#22C55E] border-[#22C55E] text-white shadow-lg`;
+            return {
+                ...base,
+                background: 'rgba(16,185,129,0.12)',
+                borderColor: '#10B981',
+                color: '#6EE7B7',
+                boxShadow: '0 0 16px rgba(16,185,129,0.2)',
+            };
         }
-
+        // Correct
         if (feedback === 'correct' && option === question.answer) {
-            return `${base} bg-[#22C55E] border-[#22C55E] text-white shadow-lg`;
+            return {
+                ...base,
+                background: 'rgba(16,185,129,0.12)',
+                borderColor: '#10B981',
+                color: '#6EE7B7',
+                boxShadow: '0 0 16px rgba(16,185,129,0.25), 0 0 32px rgba(16,185,129,0.08)',
+            };
         }
+        // Wrong selected
         if (feedback === 'incorrect' && selected === option) {
-            return `${base} bg-[#DC2626] border-[#DC2626] text-white`;
+            return {
+                ...base,
+                background: 'rgba(220,38,38,0.1)',
+                borderColor: '#DC2626',
+                color: '#FCA5A5',
+                boxShadow: '0 0 12px rgba(220,38,38,0.2)',
+            };
         }
+        // Selected (not yet checked)
         if (selected === option) {
-            return `${base} bg-[#22D3EE]/10 border-[#22D3EE] text-[#0F172A] shadow-md ring-2 ring-[#22D3EE]/30`;
+            return {
+                ...base,
+                background: 'rgba(99,102,241,0.12)',
+                borderColor: '#6366F1',
+                color: '#F1F5F9',
+                boxShadow: '0 0 12px rgba(99,102,241,0.2), 0 0 0 1px rgba(99,102,241,0.2)',
+            };
         }
-        return `${base} bg-[#F9FAFB] border-[#E2E8F0] text-[#334155] hover:bg-[#E0F2FE] hover:border-[#22D3EE]/40`;
+        // Normal
+        return {
+            ...base,
+            background: 'rgba(255,255,255,0.03)',
+            borderColor: 'rgba(255,255,255,0.08)',
+            color: '#94A3B8',
+        };
     };
 
-    const getOptionBadgeStyle = (option: string, idx: number) => {
-        const base = 'w-7 h-7 rounded-full flex items-center justify-center mr-3 text-xs font-bold shrink-0 transition-colors';
-
-        if (mode === 'teacher' && revealed && option === question.answer) {
-            return `${base} bg-white/30 text-white`;
-        }
-        if (selected === option) {
-            return `${base} bg-[#22D3EE] text-white`;
-        }
-        if (feedback === 'correct' && option === question.answer) {
-            return `${base} bg-white/30 text-white`;
+    const getBadgeStyle = (option: string, idx: number): React.CSSProperties => {
+        const base: React.CSSProperties = {
+            width: '26px',
+            height: '26px',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '11px',
+            fontWeight: 700,
+            flexShrink: 0,
+            transition: 'all 0.2s',
+        };
+        if ((mode === 'teacher' && revealed && option === question.answer) ||
+            (feedback === 'correct' && option === question.answer)) {
+            return { ...base, background: 'rgba(16,185,129,0.3)', color: '#6EE7B7' };
         }
         if (feedback === 'incorrect' && selected === option) {
-            return `${base} bg-white/30 text-white`;
+            return { ...base, background: 'rgba(220,38,38,0.3)', color: '#FCA5A5' };
         }
-        return `${base} bg-[#E2E8F0] text-[#64748B]`;
+        if (selected === option) {
+            return { ...base, background: 'rgba(99,102,241,0.4)', color: '#C7D2FE' };
+        }
+        return { ...base, background: 'rgba(255,255,255,0.06)', color: '#475569' };
+    };
+
+    /* ---- Card surface style ---- */
+    const cardStyle: React.CSSProperties = {
+        background: 'rgba(10,15,30,0.85)',
+        border: '1px solid rgba(255,255,255,0.08)',
+        borderRadius: '22px',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+        overflow: 'hidden',
+        backdropFilter: 'blur(12px)',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+    };
+
+    const headerStyle: React.CSSProperties = {
+        padding: '10px 20px',
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    };
+
+    /* ---- Stage badge label ---- */
+    const stageBadgeStyle: React.CSSProperties = {
+        fontSize: '11px',
+        fontWeight: 700,
+        color: '#A5B4FC',
+        background: 'rgba(99,102,241,0.15)',
+        border: '1px solid rgba(99,102,241,0.25)',
+        borderRadius: '99px',
+        padding: '3px 12px',
+        letterSpacing: '0.1em',
+        textTransform: 'uppercase',
     };
 
     return (
         <div className="w-full max-w-6xl mx-auto">
-            {/* Desktop: Side-by-side | Mobile: Stacked */}
             <div className="flex flex-col md:flex-row gap-4 md:gap-5">
 
-                {/* LEFT: Reading Passage (40%) */}
+                {/* LEFT: Reading Passage */}
                 <div className="w-full md:w-[40%] flex-shrink-0">
-                    <div className="bg-white rounded-2xl shadow-md border border-[#E2E8F0] overflow-hidden h-full flex flex-col">
+                    <div style={cardStyle}>
                         {/* Reading Header */}
-                        <div className="px-5 py-3 border-b border-[#F1F5F9] flex items-center gap-2">
-                            <span className="text-base">📖</span>
-                            <span className="text-xs font-bold text-[#64748B] uppercase tracking-wider">Reading Passage</span>
+                        <div style={headerStyle}>
+                            {/* Top accent strip */}
+                            <div
+                                style={{
+                                    position: 'absolute',
+                                    top: 0, left: 0, right: 0, height: '2px',
+                                    background: 'linear-gradient(90deg, #22D3EE, #6366F1)',
+                                }}
+                            />
+                            <div className="flex items-center gap-2 relative">
+                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#22D3EE" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                </svg>
+                                <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: '#22D3EE' }}>
+                                    Reading Passage
+                                </span>
+                            </div>
                             {mode === 'teacher' && highlightMode && (
-                                <span className="ml-auto text-[10px] text-[#F59E0B] bg-[#FEF3C7] px-2 py-0.5 rounded-full font-bold">
-                                    ✏️ Highlight ON
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(245,158,11,0.15)', color: '#F59E0B', border: '1px solid rgba(245,158,11,0.25)' }}>
+                                    ✏ Highlight ON
                                 </span>
                             )}
                         </div>
@@ -175,44 +239,55 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                         {/* Reading Content */}
                         <div
                             className="p-5 overflow-y-auto reading-scroll flex-1"
-                            style={{ maxHeight: '60vh', cursor: mode === 'teacher' && highlightMode ? 'text' : 'default' }}
+                            style={{ maxHeight: '60vh', cursor: mode === 'teacher' && highlightMode ? 'text' : 'default', position: 'relative' }}
                             onMouseUp={handleTextSelect}
                         >
-                            <h3 className="text-sm font-bold text-[#0F172A] mb-3 uppercase tracking-wide">AI All Around Us</h3>
+                            <h3
+                                className="text-sm font-bold mb-3 uppercase tracking-wide"
+                                style={{ color: '#22D3EE' }}
+                            >
+                                AI All Around Us
+                            </h3>
                             {renderPassage()}
                         </div>
                     </div>
                 </div>
 
-                {/* RIGHT: Question (60%) */}
+                {/* RIGHT: Question + Answers */}
                 <div className="w-full md:w-[60%]">
-                    <div className="bg-white rounded-2xl shadow-md border border-[#E2E8F0] overflow-hidden flex flex-col">
+                    <div style={cardStyle}>
                         {/* Question Header */}
-                        <div className="px-5 py-3 border-b border-[#F1F5F9] flex items-center justify-between">
-                            <span className="text-xs font-bold text-[#22D3EE] bg-[#22D3EE]/10 px-3 py-1 rounded-full uppercase tracking-wider">
-                                Stage {stageNum}
-                            </span>
+                        <div style={headerStyle}>
+                            <div style={stageBadgeStyle}>Stage {stageNum}</div>
                             <div className="flex items-center gap-2">
-                                <span className="text-xs text-[#94A3B8]">
-                                    {question.type === 'mcq' ? 'Multiple Choice' : 'True / False / Doesn\'t Say'}
+                                <span className="text-[11px] font-medium" style={{ color: '#334155' }}>
+                                    {question.type === 'mcq' ? 'Multiple Choice' : "True / False / Doesn't Say"}
                                 </span>
-
-                                {/* Teacher toolbar (compact, top-right) */}
+                                {/* Teacher toolbar */}
                                 {mode === 'teacher' && (
-                                    <div className="flex items-center gap-1 ml-2">
+                                    <div className="flex items-center gap-1 ml-1">
                                         <button
                                             onClick={handleHighlightToggle}
-                                            className={`px-2 py-1 text-[10px] font-bold rounded-md border transition-colors ${highlightMode
-                                                ? 'bg-[#FEF3C7] border-[#F59E0B] text-[#92400E]'
-                                                : 'bg-[#F8FAFC] border-[#E2E8F0] text-[#94A3B8] hover:bg-[#FEF3C7] hover:text-[#92400E]'
-                                                }`}
+                                            className="px-2 py-1 text-[10px] font-bold rounded-md transition-all"
+                                            style={{
+                                                background: highlightMode ? 'rgba(245,158,11,0.15)' : 'rgba(255,255,255,0.04)',
+                                                border: highlightMode ? '1px solid rgba(245,158,11,0.4)' : '1px solid rgba(255,255,255,0.08)',
+                                                color: highlightMode ? '#F59E0B' : '#475569',
+                                            }}
                                             title="Toggle highlight mode"
                                         >
                                             ✏️
                                         </button>
                                         <button
                                             onClick={handleClearHighlights}
-                                            className="px-2 py-1 text-[10px] font-bold rounded-md border bg-[#F8FAFC] border-[#E2E8F0] text-[#94A3B8] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FECACA] transition-colors"
+                                            className="px-2 py-1 text-[10px] font-bold rounded-md transition-all"
+                                            style={{
+                                                background: 'rgba(255,255,255,0.04)',
+                                                border: '1px solid rgba(255,255,255,0.08)',
+                                                color: '#475569',
+                                            }}
+                                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.1)'; e.currentTarget.style.color = '#F87171'; }}
+                                            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = '#475569'; }}
                                             title="Clear all highlights"
                                         >
                                             🧹
@@ -222,56 +297,95 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                             </div>
                         </div>
 
-                        <div className="p-5 md:p-6 space-y-5">
+                        <div className="p-5 md:p-6 space-y-4 flex-1 flex flex-col">
                             {/* Question Text */}
-                            <h2 className="text-base md:text-xl font-bold text-[#0F172A] leading-snug">
+                            <h2 className="text-base md:text-xl font-bold leading-snug" style={{ color: '#F1F5F9' }}>
                                 {question.question}
                             </h2>
 
                             {/* Options */}
-                            <div className="grid grid-cols-1 gap-1.5 md:gap-2">
+                            <div className="grid grid-cols-1 gap-2 flex-1">
                                 {question.options?.map((option, idx) => (
-                                    <button
+                                    <motion.button
                                         key={idx}
+                                        whileHover={(!feedback && mode === 'student') || mode === 'teacher' ? { x: 2 } : {}}
+                                        whileTap={(!feedback && mode === 'student') || mode === 'teacher' ? { scale: 0.99 } : {}}
                                         onClick={() => {
                                             if (mode === 'teacher') {
-                                                // Teacher can click options freely to highlight/discuss
                                                 setSelected(selected === option ? null : option);
                                             } else {
                                                 if (!feedback) setSelected(option);
                                             }
                                         }}
-                                        className={getOptionStyle(option)}
+                                        style={getOptionStyle(option)}
                                         disabled={mode === 'student' && !!feedback}
+                                        onMouseEnter={(e) => {
+                                            if (!feedback && mode === 'student' && selected !== option) {
+                                                e.currentTarget.style.background = 'rgba(255,255,255,0.07)';
+                                                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)';
+                                                e.currentTarget.style.color = '#CBD5E1';
+                                            }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            if (!feedback && mode === 'student' && selected !== option) {
+                                                e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                                                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                                                e.currentTarget.style.color = '#94A3B8';
+                                            }
+                                        }}
                                     >
-                                        <div className="flex items-center">
-                                            <span className={getOptionBadgeStyle(option, idx)}>
-                                                {mode === 'teacher' && revealed && option === question.answer
-                                                    ? '✓'
-                                                    : String.fromCharCode(65 + idx)}
-                                            </span>
-                                            <span>{option}</span>
-                                        </div>
-                                    </button>
+                                        <span style={getBadgeStyle(option, idx)}>
+                                            {mode === 'teacher' && revealed && option === question.answer
+                                                ? '✓'
+                                                : String.fromCharCode(65 + idx)}
+                                        </span>
+                                        <span style={{ fontSize: 'inherit' }}>{option}</span>
+                                    </motion.button>
                                 ))}
                             </div>
 
-                            {/* Bottom controls */}
+                            {/* Bottom Controls */}
                             <div className="pt-2 flex flex-col items-center gap-3">
                                 {mode === 'student' ? (
-                                    /* ---- STUDENT MODE ---- */
                                     <AnimatePresence mode="wait">
                                         {feedback === 'correct' ? (
                                             <motion.div
                                                 key="correct"
-                                                initial={{ scale: 0.8, opacity: 0 }}
+                                                initial={{ scale: 0.85, opacity: 0 }}
                                                 animate={{ scale: 1, opacity: 1 }}
                                                 className="text-center w-full"
                                             >
-                                                <div className="text-2xl md:text-3xl font-black text-[#22C55E] mb-3 tracking-wider">✅ CORRECT!</div>
+                                                {/* AI Correct State */}
+                                                <div className="flex flex-col items-center mb-3">
+                                                    <div
+                                                        className="w-12 h-12 rounded-full flex items-center justify-center mb-2"
+                                                        style={{
+                                                            background: 'rgba(16,185,129,0.15)',
+                                                            border: '1.5px solid #10B981',
+                                                            boxShadow: '0 0 20px rgba(16,185,129,0.35)',
+                                                        }}
+                                                    >
+                                                        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth={2.5}>
+                                                            <polyline points="20 6 9 17 4 12" strokeLinecap="round" strokeLinejoin="round" />
+                                                        </svg>
+                                                    </div>
+                                                    <span
+                                                        className="text-xl font-black tracking-wider uppercase"
+                                                        style={{ color: '#10B981', textShadow: '0 0 20px rgba(16,185,129,0.5)' }}
+                                                    >
+                                                        CORRECT!
+                                                    </span>
+                                                    <span className="text-xs mt-0.5" style={{ color: '#34D399' }}>
+                                                        Well done — keep going!
+                                                    </span>
+                                                </div>
                                                 <button
                                                     onClick={() => onAnswer(selected!, true)}
-                                                    className="w-full py-3.5 bg-gradient-to-r from-[#22C55E] to-[#16A34A] text-white font-bold rounded-xl shadow-lg transition-transform hover:scale-[1.02] active:scale-95 uppercase tracking-widest text-sm"
+                                                    className="w-full py-3.5 font-bold rounded-xl text-white text-sm uppercase tracking-widest transition-all duration-200 hover:scale-[1.02]"
+                                                    style={{
+                                                        background: 'linear-gradient(135deg, #059669, #10B981)',
+                                                        boxShadow: '0 4px 20px rgba(16,185,129,0.4)',
+                                                    }}
                                                 >
                                                     Continue →
                                                 </button>
@@ -280,56 +394,116 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                             <motion.div
                                                 key="incorrect"
                                                 initial={{ opacity: 0 }}
-                                                animate={{ x: [0, -8, 8, -8, 8, 0], opacity: 1 }}
+                                                animate={{ x: [0, -6, 6, -4, 4, 0], opacity: 1 }}
                                                 className="text-center w-full"
                                             >
-                                                <div className="text-xl md:text-2xl font-black text-[#DC2626] mb-2 tracking-wider">
-                                                    ❌ INCORRECT
+                                                <div className="flex flex-col items-center mb-3">
+                                                    <div
+                                                        className="w-12 h-12 rounded-full flex items-center justify-center mb-2"
+                                                        style={{
+                                                            background: 'rgba(220,38,38,0.12)',
+                                                            border: '1.5px solid #DC2626',
+                                                            boxShadow: '0 0 16px rgba(220,38,38,0.3)',
+                                                        }}
+                                                    >
+                                                        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth={2.5}>
+                                                            <line x1="18" y1="6" x2="6" y2="18" strokeLinecap="round" />
+                                                            <line x1="6" y1="6" x2="18" y2="18" strokeLinecap="round" />
+                                                        </svg>
+                                                    </div>
+                                                    <span
+                                                        className="text-xl font-black tracking-wider uppercase"
+                                                        style={{ color: '#EF4444' }}
+                                                    >
+                                                        INCORRECT
+                                                    </span>
+                                                    <span className="text-xs mt-0.5" style={{ color: '#94A3B8' }}>
+                                                        Review the passage and try the next one.
+                                                    </span>
                                                 </div>
-                                                <p className="text-sm text-[#64748B] mb-4">
-                                                    You should review the passage again.
-                                                </p>
                                                 <button
                                                     onClick={() => onAnswer(selected!, false)}
-                                                    className="w-full py-3.5 bg-[#0F172A] text-white font-bold rounded-xl shadow-lg transition-transform hover:scale-[1.02] active:scale-95 uppercase tracking-widest text-sm"
+                                                    className="w-full py-3.5 font-bold rounded-xl text-white text-sm uppercase tracking-widest transition-all duration-200 hover:scale-[1.02]"
+                                                    style={{
+                                                        background: 'rgba(255,255,255,0.06)',
+                                                        border: '1px solid rgba(255,255,255,0.12)',
+                                                        boxShadow: 'none',
+                                                    }}
+                                                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
+                                                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; }}
                                                 >
                                                     ▶ Continue Challenge
                                                 </button>
                                             </motion.div>
                                         ) : (
-                                            <button
+                                            <motion.button
+                                                key="check"
+                                                initial={{ opacity: 0.7 }}
+                                                animate={{ opacity: 1 }}
                                                 onClick={handleCheck}
                                                 disabled={!selected}
-                                                className={`
-                                                    w-full py-3.5 font-bold text-base uppercase tracking-widest transition-all
-                                                    ${selected
-                                                        ? 'bg-[#F59E0B] text-white shadow-lg shadow-[#F59E0B]/30 hover:bg-[#D97706] hover:shadow-xl'
-                                                        : 'bg-[#E2E8F0] text-[#94A3B8] cursor-not-allowed'}
-                                                `}
-                                                style={{ borderRadius: '14px' }}
+                                                className="w-full py-3.5 font-black text-sm uppercase tracking-widest rounded-xl transition-all duration-300"
+                                                style={selected ? {
+                                                    background: 'linear-gradient(135deg, #06B6D4 0%, #6366F1 55%, #8B5CF6 100%)',
+                                                    boxShadow: '0 4px 24px rgba(99,102,241,0.4)',
+                                                    color: '#fff',
+                                                    cursor: 'pointer',
+                                                } : {
+                                                    background: 'rgba(255,255,255,0.04)',
+                                                    border: '1px solid rgba(255,255,255,0.06)',
+                                                    color: '#334155',
+                                                    cursor: 'not-allowed',
+                                                }}
+                                                onMouseEnter={e => {
+                                                    if (selected) {
+                                                        e.currentTarget.style.boxShadow = '0 6px 32px rgba(99,102,241,0.6), 0 0 20px rgba(34,211,238,0.2)';
+                                                        e.currentTarget.style.transform = 'scale(1.02)';
+                                                    }
+                                                }}
+                                                onMouseLeave={e => {
+                                                    e.currentTarget.style.boxShadow = selected ? '0 4px 24px rgba(99,102,241,0.4)' : 'none';
+                                                    e.currentTarget.style.transform = 'scale(1)';
+                                                }}
                                             >
-                                                Check Answer
-                                            </button>
+                                                {selected ? '⚡ Check Answer' : 'Select an Answer'}
+                                            </motion.button>
                                         )}
                                     </AnimatePresence>
                                 ) : (
-                                    /* ---- TEACHER MODE: Reveal + Next (no Submit) ---- */
+                                    /* Teacher Mode Controls */
                                     <div className="flex gap-3 w-full">
                                         {!revealed ? (
                                             <button
                                                 onClick={handleReveal}
-                                                className="flex-1 py-3 bg-[#F59E0B] text-white font-bold rounded-xl shadow-md hover:bg-[#D97706] transition-colors uppercase tracking-widest text-sm"
+                                                className="flex-1 py-3 font-bold rounded-xl text-white text-sm uppercase tracking-widest transition-all duration-200 hover:scale-[1.02]"
+                                                style={{
+                                                    background: 'linear-gradient(135deg, #D97706, #F59E0B)',
+                                                    boxShadow: '0 4px 16px rgba(245,158,11,0.35)',
+                                                }}
                                             >
                                                 👁 Reveal
                                             </button>
                                         ) : (
-                                            <div className="flex-1 py-3 bg-[#22C55E]/10 text-[#22C55E] font-bold rounded-xl text-center text-sm uppercase tracking-widest">
-                                                ✅ Answer: {question.answer.length > 40 ? question.answer.substring(0, 40) + '…' : question.answer}
+                                            <div
+                                                className="flex-1 py-3 font-bold rounded-xl text-center text-sm uppercase tracking-widest"
+                                                style={{
+                                                    background: 'rgba(16,185,129,0.08)',
+                                                    border: '1px solid rgba(16,185,129,0.25)',
+                                                    color: '#6EE7B7',
+                                                }}
+                                            >
+                                                ✅ {question.answer.length > 40 ? question.answer.substring(0, 40) + '…' : question.answer}
                                             </div>
                                         )}
                                         <button
                                             onClick={onNextQuestion}
-                                            className="flex-1 py-3 bg-[#0F172A] text-white font-bold rounded-xl shadow-md hover:bg-[#1E293B] transition-colors uppercase tracking-widest text-sm"
+                                            className="flex-1 py-3 font-bold rounded-xl text-white text-sm uppercase tracking-widest transition-all duration-200"
+                                            style={{
+                                                background: 'rgba(255,255,255,0.05)',
+                                                border: '1px solid rgba(255,255,255,0.1)',
+                                            }}
+                                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
+                                            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
                                         >
                                             Next →
                                         </button>
