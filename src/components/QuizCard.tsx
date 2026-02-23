@@ -38,7 +38,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
     const handleClearHighlights = () => setHighlights([]);
 
     const handleTextSelect = useCallback(() => {
-        if (!highlightMode || mode !== 'teacher') return;
+        if (!highlightMode) return;
         const selection = window.getSelection();
         if (!selection || selection.isCollapsed) return;
         const selectedText = selection.toString().trim();
@@ -46,10 +46,10 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
             setHighlights(prev => [...prev, { text: selectedText, start: 0, end: selectedText.length }]);
             selection.removeAllRanges();
         }
-    }, [highlightMode, mode]);
+    }, [highlightMode]);
 
     const renderPassage = () => {
-        if (mode === 'teacher' && highlights.length > 0) {
+        if (highlights.length > 0) {
             const parts: Array<{ text: string; highlighted: boolean }> = [];
             let remaining = READING_PASSAGE;
             for (const h of highlights) {
@@ -63,9 +63,20 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
             if (remaining.length > 0) parts.push({ text: remaining, highlighted: false });
             if (parts.length > 0) {
                 return (
-                    <p className="text-sm md:text-base leading-relaxed" style={{ color: '#94A3B8', lineHeight: '1.75' }}>
+                    <p className="text-sm md:text-base leading-relaxed whitespace-pre-line" style={{ color: '#94A3B8', lineHeight: '1.75' }}>
                         {parts.map((part, i) => (
-                            <span key={i} className={part.highlighted ? 'teacher-highlight' : ''}>{part.text}</span>
+                            <span
+                                key={i}
+                                style={part.highlighted ? {
+                                    background: '#FACC15',
+                                    color: '#1A1200',
+                                    borderRadius: '3px',
+                                    padding: '0 2px',
+                                    boxShadow: '0 0 8px rgba(250,204,21,0.5)',
+                                } : {}}
+                            >
+                                {part.text}
+                            </span>
                         ))}
                     </p>
                 );
@@ -229,17 +240,51 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                     Reading Passage
                                 </span>
                             </div>
-                            {mode === 'teacher' && highlightMode && (
-                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(245,158,11,0.15)', color: '#F59E0B', border: '1px solid rgba(245,158,11,0.25)' }}>
-                                    ✏ Highlight ON
-                                </span>
-                            )}
+                            {/* Highlight controls — available for all modes */}
+                            <div className="flex items-center gap-1.5">
+                                <button
+                                    onClick={handleHighlightToggle}
+                                    className="flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold rounded-lg transition-all duration-200"
+                                    style={highlightMode ? {
+                                        background: 'rgba(250,204,21,0.15)',
+                                        border: '1px solid rgba(250,204,21,0.45)',
+                                        color: '#FACC15',
+                                        boxShadow: '0 0 8px rgba(250,204,21,0.2)',
+                                    } : {
+                                        background: 'rgba(255,255,255,0.04)',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        color: '#475569',
+                                    }}
+                                    title={highlightMode ? 'Click to turn off highlight mode' : 'Click then select text to highlight'}
+                                >
+                                    <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M9.5 21H5l1.5-4.5L18 5l3 3L9.5 21zm0 0" />
+                                    </svg>
+                                    {highlightMode ? 'On' : 'Mark'}
+                                </button>
+                                {highlights.length > 0 && (
+                                    <button
+                                        onClick={handleClearHighlights}
+                                        className="px-2.5 py-1 text-[10px] font-bold rounded-lg transition-all duration-200"
+                                        style={{
+                                            background: 'rgba(255,255,255,0.04)',
+                                            border: '1px solid rgba(255,255,255,0.1)',
+                                            color: '#475569',
+                                        }}
+                                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.1)'; e.currentTarget.style.color = '#F87171'; e.currentTarget.style.borderColor = 'rgba(220,38,38,0.3)'; }}
+                                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = '#475569'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+                                        title="Clear all highlights"
+                                    >
+                                        Clear
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
                         {/* Reading Content */}
                         <div
                             className="p-5 overflow-y-auto reading-scroll flex-1"
-                            style={{ maxHeight: '60vh', cursor: mode === 'teacher' && highlightMode ? 'text' : 'default', position: 'relative' }}
+                            style={{ maxHeight: '60vh', cursor: highlightMode ? 'text' : 'auto', position: 'relative', userSelect: highlightMode ? 'text' : 'auto' }}
                             onMouseUp={handleTextSelect}
                         >
                             <h3
@@ -263,37 +308,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                 <span className="text-[11px] font-medium" style={{ color: '#334155' }}>
                                     {question.type === 'mcq' ? 'Multiple Choice' : "True / False / Doesn't Say"}
                                 </span>
-                                {/* Teacher toolbar */}
-                                {mode === 'teacher' && (
-                                    <div className="flex items-center gap-1 ml-1">
-                                        <button
-                                            onClick={handleHighlightToggle}
-                                            className="px-2 py-1 text-[10px] font-bold rounded-md transition-all"
-                                            style={{
-                                                background: highlightMode ? 'rgba(245,158,11,0.15)' : 'rgba(255,255,255,0.04)',
-                                                border: highlightMode ? '1px solid rgba(245,158,11,0.4)' : '1px solid rgba(255,255,255,0.08)',
-                                                color: highlightMode ? '#F59E0B' : '#475569',
-                                            }}
-                                            title="Toggle highlight mode"
-                                        >
-                                            ✏️
-                                        </button>
-                                        <button
-                                            onClick={handleClearHighlights}
-                                            className="px-2 py-1 text-[10px] font-bold rounded-md transition-all"
-                                            style={{
-                                                background: 'rgba(255,255,255,0.04)',
-                                                border: '1px solid rgba(255,255,255,0.08)',
-                                                color: '#475569',
-                                            }}
-                                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.1)'; e.currentTarget.style.color = '#F87171'; }}
-                                            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = '#475569'; }}
-                                            title="Clear all highlights"
-                                        >
-                                            🧹
-                                        </button>
-                                    </div>
-                                )}
+
                             </div>
                         </div>
 
