@@ -63,7 +63,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
             if (remaining.length > 0) parts.push({ text: remaining, highlighted: false });
             if (parts.length > 0) {
                 return (
-                    <p className="text-sm md:text-base leading-relaxed whitespace-pre-line" style={{ color: '#94A3B8', lineHeight: '1.75' }}>
+                    <p className="text-sm leading-relaxed whitespace-pre-line" style={{ color: '#94A3B8', lineHeight: '1.75', fontSize: 'clamp(13px, 1.5vw, 18px)' }}>
                         {parts.map((part, i) => (
                             <span
                                 key={i}
@@ -83,7 +83,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
             }
         }
         return (
-            <p className="text-sm md:text-base leading-relaxed whitespace-pre-line" style={{ color: '#94A3B8', lineHeight: '1.75' }}>
+            <p className="text-sm leading-relaxed whitespace-pre-line" style={{ color: '#94A3B8', lineHeight: '1.75', fontSize: 'clamp(13px, 1.5vw, 18px)' }}>
                 {READING_PASSAGE}
             </p>
         );
@@ -99,7 +99,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
             textAlign: 'left',
             transition: 'all 0.2s cubic-bezier(0.4,0,0.2,1)',
             fontWeight: 500,
-            fontSize: '14px',
+            fontSize: 'clamp(14px, 1.4vw, 17px)',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -314,7 +314,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
 
                         <div className="p-5 md:p-6 space-y-4 flex-1 flex flex-col">
                             {/* Question Text */}
-                            <h2 className="text-base md:text-xl font-bold leading-snug" style={{ color: '#F1F5F9' }}>
+                            <h2 className="text-base font-bold leading-snug" style={{ color: '#F1F5F9', fontSize: 'clamp(15px, 1.8vw, 22px)' }}>
                                 {question.question}
                             </h2>
 
@@ -396,10 +396,11 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                                 </div>
                                                 <button
                                                     onClick={() => onAnswer(selected!, true)}
-                                                    className="w-full py-3.5 font-bold rounded-xl text-white text-sm uppercase tracking-widest transition-all duration-200 hover:scale-[1.02]"
+                                                    className="w-full py-3.5 font-bold rounded-xl text-white uppercase tracking-widest transition-all duration-200 hover:scale-[1.02]"
                                                     style={{
                                                         background: 'linear-gradient(135deg, #059669, #10B981)',
                                                         boxShadow: '0 4px 20px rgba(16,185,129,0.4)',
+                                                        fontSize: 'clamp(14px, 1.4vw, 17px)',
                                                     }}
                                                 >
                                                     Continue →
@@ -438,11 +439,12 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                                 </div>
                                                 <button
                                                     onClick={() => onAnswer(selected!, false)}
-                                                    className="w-full py-3.5 font-bold rounded-xl text-white text-sm uppercase tracking-widest transition-all duration-200 hover:scale-[1.02]"
+                                                    className="w-full py-3.5 font-bold rounded-xl text-white uppercase tracking-widest transition-all duration-200 hover:scale-[1.02]"
                                                     style={{
                                                         background: 'rgba(255,255,255,0.06)',
                                                         border: '1px solid rgba(255,255,255,0.12)',
                                                         boxShadow: 'none',
+                                                        fontSize: 'clamp(14px, 1.4vw, 17px)',
                                                     }}
                                                     onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
                                                     onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; }}
@@ -457,17 +459,19 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                                 animate={{ opacity: 1 }}
                                                 onClick={handleCheck}
                                                 disabled={!selected}
-                                                className="w-full py-3.5 font-black text-sm uppercase tracking-widest rounded-xl transition-all duration-300"
+                                                className="w-full py-3.5 font-black uppercase tracking-widest rounded-xl transition-all duration-300"
                                                 style={selected ? {
                                                     background: 'linear-gradient(135deg, #06B6D4 0%, #6366F1 55%, #8B5CF6 100%)',
                                                     boxShadow: '0 4px 24px rgba(99,102,241,0.4)',
                                                     color: '#fff',
                                                     cursor: 'pointer',
+                                                    fontSize: 'clamp(14px, 1.4vw, 17px)',
                                                 } : {
                                                     background: 'rgba(255,255,255,0.04)',
                                                     border: '1px solid rgba(255,255,255,0.06)',
                                                     color: '#334155',
                                                     cursor: 'not-allowed',
+                                                    fontSize: 'clamp(14px, 1.4vw, 17px)',
                                                 }}
                                                 onMouseEnter={e => {
                                                     if (selected) {
@@ -490,10 +494,11 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                         {!revealed ? (
                                             <button
                                                 onClick={handleReveal}
-                                                className="flex-1 py-3 font-bold rounded-xl text-white text-sm uppercase tracking-widest transition-all duration-200 hover:scale-[1.02]"
+                                                className="flex-1 py-3 font-bold rounded-xl text-white uppercase tracking-widest transition-all duration-200 hover:scale-[1.02]"
                                                 style={{
                                                     background: 'linear-gradient(135deg, #D97706, #F59E0B)',
                                                     boxShadow: '0 4px 16px rgba(245,158,11,0.35)',
+                                                    fontSize: 'clamp(14px, 1.4vw, 17px)',
                                                 }}
                                             >
                                                 👁 Reveal
@@ -512,10 +517,11 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                         )}
                                         <button
                                             onClick={onNextQuestion}
-                                            className="flex-1 py-3 font-bold rounded-xl text-white text-sm uppercase tracking-widest transition-all duration-200"
+                                            className="flex-1 py-3 font-bold rounded-xl text-white uppercase tracking-widest transition-all duration-200"
                                             style={{
                                                 background: 'rgba(255,255,255,0.05)',
                                                 border: '1px solid rgba(255,255,255,0.1)',
+                                                fontSize: 'clamp(14px, 1.4vw, 17px)',
                                             }}
                                             onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
                                             onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
