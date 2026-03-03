@@ -63,7 +63,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
             if (remaining.length > 0) parts.push({ text: remaining, highlighted: false });
             if (parts.length > 0) {
                 return (
-                    <p className="text-sm leading-relaxed whitespace-pre-line" style={{ color: '#E2E8F0', lineHeight: '1.75', fontSize: 'clamp(13px, 1.6vw, 20px)' }}>
+                    <p className="text-sm leading-relaxed whitespace-pre-line" style={{ color: '#F8FAFC', lineHeight: '1.85', fontSize: 'clamp(14px, 1.9vw, 22px)' }}>
                         {parts.map((part, i) => (
                             <span
                                 key={i}
@@ -83,7 +83,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
             }
         }
         return (
-            <p className="text-sm leading-relaxed whitespace-pre-line" style={{ color: '#94A3B8', lineHeight: '1.75', fontSize: 'clamp(13px, 1.5vw, 18px)' }}>
+            <p className="text-sm leading-relaxed whitespace-pre-line" style={{ color: '#F8FAFC', lineHeight: '1.85', fontSize: 'clamp(14px, 1.9vw, 22px)' }}>
                 {READING_PASSAGE}
             </p>
         );
