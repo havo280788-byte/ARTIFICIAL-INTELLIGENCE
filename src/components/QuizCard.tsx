@@ -63,7 +63,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
             if (remaining.length > 0) parts.push({ text: remaining, highlighted: false });
             if (parts.length > 0) {
                 return (
-                    <p className="text-sm leading-relaxed whitespace-pre-line" style={{ color: '#94A3B8', lineHeight: '1.75', fontSize: 'clamp(13px, 1.5vw, 18px)' }}>
+                    <p className="text-sm leading-relaxed whitespace-pre-line" style={{ color: '#E2E8F0', lineHeight: '1.75', fontSize: 'clamp(13px, 1.6vw, 20px)' }}>
                         {parts.map((part, i) => (
                             <span
                                 key={i}
@@ -99,7 +99,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
             textAlign: 'left',
             transition: 'all 0.2s cubic-bezier(0.4,0,0.2,1)',
             fontWeight: 500,
-            fontSize: 'clamp(14px, 1.4vw, 17px)',
+            fontSize: 'clamp(14px, 1.5vw, 19px)',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -151,7 +151,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
             ...base,
             background: 'rgba(255,255,255,0.03)',
             borderColor: 'rgba(255,255,255,0.08)',
-            color: '#94A3B8',
+            color: '#E2E8F0',
         };
     };
 
@@ -314,7 +314,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
 
                         <div className="p-5 md:p-6 space-y-4 flex-1 flex flex-col">
                             {/* Question Text */}
-                            <h2 className="text-base font-bold leading-snug" style={{ color: '#F1F5F9', fontSize: 'clamp(15px, 1.8vw, 22px)' }}>
+                            <h2 className="text-base font-bold leading-snug" style={{ color: '#F1F5F9', fontSize: 'clamp(15px, 2vw, 26px)' }}>
                                 {question.question}
                             </h2>
 
@@ -400,7 +400,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                                     style={{
                                                         background: 'linear-gradient(135deg, #059669, #10B981)',
                                                         boxShadow: '0 4px 20px rgba(16,185,129,0.4)',
-                                                        fontSize: 'clamp(14px, 1.4vw, 17px)',
+                                                        fontSize: 'clamp(14px, 1.5vw, 19px)',
                                                     }}
                                                 >
                                                     Continue →
@@ -444,7 +444,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                                         background: 'rgba(255,255,255,0.06)',
                                                         border: '1px solid rgba(255,255,255,0.12)',
                                                         boxShadow: 'none',
-                                                        fontSize: 'clamp(14px, 1.4vw, 17px)',
+                                                        fontSize: 'clamp(14px, 1.5vw, 19px)',
                                                     }}
                                                     onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
                                                     onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; }}
@@ -465,13 +465,13 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                                     boxShadow: '0 4px 24px rgba(99,102,241,0.4)',
                                                     color: '#fff',
                                                     cursor: 'pointer',
-                                                    fontSize: 'clamp(14px, 1.4vw, 17px)',
+                                                    fontSize: 'clamp(14px, 1.5vw, 19px)',
                                                 } : {
                                                     background: 'rgba(255,255,255,0.04)',
                                                     border: '1px solid rgba(255,255,255,0.06)',
                                                     color: '#334155',
                                                     cursor: 'not-allowed',
-                                                    fontSize: 'clamp(14px, 1.4vw, 17px)',
+                                                    fontSize: 'clamp(14px, 1.5vw, 19px)',
                                                 }}
                                                 onMouseEnter={e => {
                                                     if (selected) {
@@ -498,7 +498,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                                 style={{
                                                     background: 'linear-gradient(135deg, #D97706, #F59E0B)',
                                                     boxShadow: '0 4px 16px rgba(245,158,11,0.35)',
-                                                    fontSize: 'clamp(14px, 1.4vw, 17px)',
+                                                    fontSize: 'clamp(14px, 1.5vw, 19px)',
                                                 }}
                                             >
                                                 👁 Reveal
@@ -521,7 +521,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                             style={{
                                                 background: 'rgba(255,255,255,0.05)',
                                                 border: '1px solid rgba(255,255,255,0.1)',
-                                                fontSize: 'clamp(14px, 1.4vw, 17px)',
+                                                fontSize: 'clamp(14px, 1.5vw, 19px)',
                                             }}
                                             onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
                                             onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
