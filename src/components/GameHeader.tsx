@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { STAGES } from '../utils/gameData';
 
@@ -19,6 +19,21 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
     };
 
     const isWarning = timeLeft <= 60;
+    const [isFullscreen, setIsFullscreen] = useState(false);
+
+    const toggleFullscreen = useCallback(() => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(() => { });
+        } else {
+            document.exitFullscreen().catch(() => { });
+        }
+    }, []);
+
+    useEffect(() => {
+        const onFsChange = () => setIsFullscreen(!!document.fullscreenElement);
+        document.addEventListener('fullscreenchange', onFsChange);
+        return () => document.removeEventListener('fullscreenchange', onFsChange);
+    }, []);
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -60,11 +75,11 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                         🤖
                     </div>
                     <div>
-                        <h1 className="text-sm md:text-base font-black uppercase tracking-tight leading-tight">
+                        <h1 className="text-sm md:text-xl font-black uppercase tracking-tight leading-tight">
                             <span style={{ color: '#22D3EE' }}>AI</span>
                             <span className="text-[#CBD5E1]"> – English 12</span>
                         </h1>
-                        <p className="text-[10px] text-[#334155] uppercase tracking-widest hidden md:block font-semibold">
+                        <p className="text-[10px] md:text-xs text-[#334155] uppercase tracking-widest hidden md:block font-semibold">
                             Reading Challenge
                         </p>
                     </div>
@@ -85,7 +100,7 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                         >
                             <span className="text-sm" style={{ color: isWarning ? '#F87171' : '#22D3EE' }}>⏱</span>
                             <span
-                                className="font-mono text-lg md:text-xl font-bold tracking-wider"
+                                className="font-mono text-lg md:text-2xl font-bold tracking-wider"
                                 style={{ color: isWarning ? '#F87171' : '#F1F5F9' }}
                             >
                                 {formatTime(timeLeft)}
@@ -100,8 +115,8 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                                     border: '1px solid rgba(16,185,129,0.25)',
                                 }}
                             >
-                                <span className="text-sm">🟢</span>
-                                <span className="text-xs font-bold text-[#6EE7B7] uppercase tracking-wider whitespace-nowrap">
+                                <span className="text-sm md:text-base">🟢</span>
+                                <span className="text-xs md:text-sm font-bold text-[#6EE7B7] uppercase tracking-wider whitespace-nowrap">
                                     Teacher Mode
                                 </span>
                             </div>
@@ -110,7 +125,7 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                                 {onShowReview && (
                                     <button
                                         onClick={onShowReview}
-                                        className="px-2.5 py-1 text-[10px] font-bold rounded-lg uppercase tracking-wider transition-all duration-150"
+                                        className="px-3 py-1.5 text-xs font-bold rounded-lg uppercase tracking-wider transition-all duration-150"
                                         style={{
                                             background: 'rgba(255,255,255,0.04)',
                                             border: '1px solid rgba(255,255,255,0.08)',
@@ -125,7 +140,7 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                                 {onShowLeaderboard && (
                                     <button
                                         onClick={onShowLeaderboard}
-                                        className="px-2.5 py-1 text-[10px] font-bold rounded-lg uppercase tracking-wider transition-all duration-150"
+                                        className="px-3 py-1.5 text-xs font-bold rounded-lg uppercase tracking-wider transition-all duration-150"
                                         style={{
                                             background: 'rgba(255,255,255,0.04)',
                                             border: '1px solid rgba(255,255,255,0.08)',
@@ -137,6 +152,36 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                                         Leaderboard
                                     </button>
                                 )}
+                                {/* Fullscreen button – desktop Teacher View only */}
+                                <button
+                                    onClick={toggleFullscreen}
+                                    title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+                                    className="px-3 py-1.5 text-xs font-bold rounded-lg uppercase tracking-wider transition-all duration-150 flex items-center gap-1.5"
+                                    style={{
+                                        background: isFullscreen ? 'rgba(34,211,238,0.10)' : 'rgba(255,255,255,0.04)',
+                                        border: isFullscreen ? '1px solid rgba(34,211,238,0.35)' : '1px solid rgba(255,255,255,0.08)',
+                                        color: isFullscreen ? '#22D3EE' : '#64748B',
+                                    }}
+                                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(34,211,238,0.12)'; e.currentTarget.style.borderColor = 'rgba(34,211,238,0.4)'; e.currentTarget.style.color = '#22D3EE'; }}
+                                    onMouseLeave={e => {
+                                        e.currentTarget.style.background = isFullscreen ? 'rgba(34,211,238,0.10)' : 'rgba(255,255,255,0.04)';
+                                        e.currentTarget.style.borderColor = isFullscreen ? 'rgba(34,211,238,0.35)' : 'rgba(255,255,255,0.08)';
+                                        e.currentTarget.style.color = isFullscreen ? '#22D3EE' : '#64748B';
+                                    }}
+                                >
+                                    {isFullscreen ? (
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M8 3v3a2 2 0 0 1-2 2H3" /><path d="M21 8h-3a2 2 0 0 1-2-2V3" />
+                                            <path d="M3 16h3a2 2 0 0 1 2 2v3" /><path d="M16 21v-3a2 2 0 0 1 2-2h3" />
+                                        </svg>
+                                    ) : (
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M3 7V5a2 2 0 0 1 2-2h2" /><path d="M17 3h2a2 2 0 0 1 2 2v2" />
+                                            <path d="M21 17v2a2 2 0 0 1-2 2h-2" /><path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+                                        </svg>
+                                    )}
+                                    {isFullscreen ? 'Exit' : 'Fullscreen'}
+                                </button>
                             </div>
                         </div>
                     )}
