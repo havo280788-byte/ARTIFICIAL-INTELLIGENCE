@@ -51,7 +51,7 @@ export const QUESTIONS: Question[] = [
     {
         id: 'q2',
         type: 'tfd',
-        question: 'AI is widely used because it can process large amounts of data and imitate human brain functions.',
+        question: 'AI is widely used because it can process large amounts of data and imitate human brain functions accurately and efficiently.',
         options: ['True', 'False'],
         answer: 'True'
     },
