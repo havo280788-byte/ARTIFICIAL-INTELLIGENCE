@@ -75,13 +75,15 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                         🤖
                     </div>
                     <div>
+
                         <h1 className="text-sm md:text-xl font-black uppercase tracking-tight leading-tight">
-                            <span style={{ color: '#22D3EE' }}>AI</span>
-                            <span className="text-[#CBD5E1]"> – English 12</span>
+                            <span style={{ color: '#22D3EE' }}>WORD</span>
+                            <span className="text-[#CBD5E1]"> – Matching</span>
                         </h1>
                         <p className="text-[10px] md:text-xs text-[#334155] uppercase tracking-widest hidden md:block font-semibold">
-                            Reading Challenge
+                            Vocabulary Challenge
                         </p>
+
                     </div>
                 </div>
 

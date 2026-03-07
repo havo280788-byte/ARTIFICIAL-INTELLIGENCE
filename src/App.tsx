@@ -8,15 +8,14 @@ import GameWin from './components/GameWin';
 import Leaderboard from './components/Leaderboard';
 import ReviewMode from './components/ReviewMode';
 import WaitingScreen from './components/WaitingScreen';
-import { STAGES, getRandomQuestions, Question } from './utils/gameData';
+
+import { STAGES, getItemsForStage, MatchingItem } from './utils/gameData';
 import { db } from './utils/firebase';
 import { collection, addDoc } from 'firebase/firestore';
+import MatchingGame from './components/MatchingGame';
 
 export type AnswerRecord = {
   questionId: string;
-  question: string;
-  selectedAnswer: string;
-  correctAnswer: string;
   isCorrect: boolean;
 };
 
@@ -25,7 +24,7 @@ export default function App() {
   const [player, setPlayer] = useState({ name: '', className: '' });
   const [currentStage, setCurrentStage] = useState(0);
   const [timeLeft, setTimeLeft] = useState(8 * 60);
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [items, setItems] = useState<MatchingItem[]>([]);
   const [score, setScore] = useState(0);
   const [answers, setAnswers] = useState<AnswerRecord[]>([]);
   const [mode, setMode] = useState<'student' | 'teacher'>('student');
@@ -55,7 +54,8 @@ export default function App() {
   // Student start
   const handleStart = (name: string, className: string) => {
     setPlayer({ name, className });
-    setQuestions(getRandomQuestions());
+    const initialItems = getItemsForStage(1);
+    setItems(initialItems);
     setCurrentStage(0);
     setTimeLeft(8 * 60);
     setScore(0);
@@ -67,7 +67,8 @@ export default function App() {
   // Teacher start (no name/class needed, no timer)
   const handleTeacherStart = () => {
     setPlayer({ name: 'Teacher', className: '' });
-    setQuestions(getRandomQuestions());
+    const initialItems = getItemsForStage(1);
+    setItems(initialItems);
     setCurrentStage(0);
     setTimeLeft(8 * 60); // not used but reset
     setScore(0);
@@ -76,62 +77,32 @@ export default function App() {
     setScreen('game');
   };
 
-  // Student: handle answer with score/save logic
-  const handleAnswer = (selected: string, isCorrect: boolean) => {
-    const q = questions[currentStage];
-    const record: AnswerRecord = {
-      questionId: q.id,
-      question: q.question,
-      selectedAnswer: selected,
-      correctAnswer: q.answer,
-      isCorrect
-    };
-    setAnswers(prev => [...prev, record]);
+  // All matched in current stage
+  const handleComplete = (points: number) => {
+    setScore(prev => prev + points);
 
-    if (isCorrect) {
-      setScore(prev => prev + 1);
-      if (currentStage < STAGES.length - 1) {
-        setCurrentStage(prev => prev + 1);
-      } else {
-        const duration = (8 * 60) - timeLeft;
-        const finalScore = score + 1;
-        // Only save in student mode
-        if (mode === 'student') {
-          saveToLeaderboard(duration, finalScore, [...answers, record]);
-        }
-        setScreen(mode === 'student' ? 'win' : 'login');
-      }
-    } else {
-      // Wrong answer: advance to next question (feedback shown inline in QuizCard)
-      if (currentStage < STAGES.length - 1) {
-        setCurrentStage(prev => prev + 1);
-      } else {
-        const duration = (8 * 60) - timeLeft;
-        if (mode === 'student') {
-          saveToLeaderboard(duration, score, [...answers, record]);
-        }
-        setScreen(mode === 'student' ? 'win' : 'login');
-      }
-    }
-  };
-
-  // Teacher: next question (no scoring)
-  const handleTeacherNext = () => {
     if (currentStage < STAGES.length - 1) {
-      setCurrentStage(prev => prev + 1);
+      const nextStage = currentStage + 1;
+      setCurrentStage(nextStage);
+      setItems(getItemsForStage(nextStage + 1));
     } else {
-      // All questions reviewed — go back to login
-      setScreen('login');
+      const duration = (8 * 60) - timeLeft;
+      const finalScore = score + points;
+
+      if (mode === 'student') {
+        saveToLeaderboard(duration, finalScore, []);
+      }
+      setScreen(mode === 'student' ? 'win' : 'login');
     }
   };
 
-  const saveToLeaderboard = async (duration: number, finalScore: number, allAnswers: AnswerRecord[]) => {
+  const saveToLeaderboard = async (duration: number, finalScore: number, allAnswers: any[]) => {
     const entry = {
       name: player.name,
       class: player.className,
       time: duration,
       score: finalScore,
-      totalQuestions: STAGES.length,
+      totalQuestions: items.length,
       answers: allAnswers,
       date: new Date().toISOString().replace('T', ' ').substring(0, 16)
     };
@@ -164,16 +135,15 @@ export default function App() {
               onShowReview={mode === 'teacher' ? () => setScreen('review') : undefined}
             />
             <div className="p-3 md:p-5 w-full flex-1">
-              <QuizCard
-                question={questions[currentStage]}
-                stageNum={currentStage + 1}
-                onAnswer={handleAnswer}
+              <MatchingGame
+                items={items}
+                onComplete={handleComplete}
                 mode={mode}
-                onNextQuestion={mode === 'teacher' ? handleTeacherNext : undefined}
               />
             </div>
           </motion.div>
         )}
+
 
         {screen === 'gameover' && (
           <motion.div key="gameover" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
@@ -223,7 +193,7 @@ export default function App() {
           <motion.div key="review" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <ReviewMode
               answers={answers}
-              questions={questions}
+              questions={[]}
               onBack={() => setScreen(mode === 'teacher' ? 'game' : 'win')}
             />
           </motion.div>
