@@ -15,6 +15,7 @@ import { collection, addDoc } from 'firebase/firestore';
 
 export type AnswerRecord = {
   questionId: string;
+  selectedAnswer: string;
   isCorrect: boolean;
 };
 
@@ -71,24 +72,7 @@ export default function App() {
     setScreen('game');
   };
 
-  // All matched in current stage
-  const handleComplete = (points: number) => {
-    setScore(prev => prev + points);
-
-    if (currentStage < STAGES.length - 1) {
-      const nextStage = currentStage + 1;
-      setCurrentStage(nextStage);
-      setItems(getItemsForStage(nextStage + 1));
-    } else {
-      const duration = (8 * 60) - timeLeft;
-      const finalScore = score + points;
-
-      if (mode === 'student') {
-        saveToLeaderboard(duration, finalScore, []);
-      }
-      setScreen(mode === 'student' ? 'win' : 'login');
-    }
-  };
+  // handleComplete removed as logic is now in QuizCard callback
 
   const saveToLeaderboard = async (duration: number, finalScore: number, allAnswers: any[]) => {
     const entry = {
@@ -133,7 +117,11 @@ export default function App() {
                 question={QUESTIONS[currentStage]}
                 stageNum={currentStage + 1}
                 onAnswer={(selected, isCorrect) => {
-                  const record = { questionId: QUESTIONS[currentStage].id, isCorrect };
+                  const record = { 
+                    questionId: QUESTIONS[currentStage].id, 
+                    selectedAnswer: selected,
+                    isCorrect 
+                  };
                   setAnswers(prev => [...prev, record]);
                   if (isCorrect) setScore(s => s + 1);
                   
@@ -210,7 +198,7 @@ export default function App() {
           <motion.div key="review" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <ReviewMode
               answers={answers}
-              questions={[]}
+              questions={QUESTIONS}
               onBack={() => setScreen(mode === 'teacher' ? 'game' : 'win')}
             />
           </motion.div>

@@ -80,10 +80,10 @@ export default function ReviewMode({ answers, questions, onBack }: ReviewModePro
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     };
 
-    const getHighlightedPassage = (answer: AnswerRecord, question: Question | undefined) => {
+    const getHighlightedPassage = (answer: any, question: Question | undefined) => {
         if (!question) return null;
         const paragraphs = READING_PASSAGE.split('\n\n');
-        const qLower = question.question.toLowerCase();
+        const qLower = (question.question || "").toLowerCase();
 
         let relIdx = -1;
         if (qLower.includes('paragraph 1') || qLower.includes('what can ai do')) relIdx = 0;
@@ -336,14 +336,14 @@ export default function ReviewMode({ answers, questions, onBack }: ReviewModePro
                                 <div className="p-5 md:p-6 space-y-4">
                                     {/* Question text */}
                                     <h2 className="text-base md:text-lg font-bold leading-snug" style={{ color: '#F5F5F5' }}>
-                                        {answer.question}
+                                        {question?.question}
                                     </h2>
 
                                     {/* Options — read-only */}
                                     <div className="space-y-2">
                                         {question?.options?.map((option, idx) => {
-                                            const isCorrectOption = option === answer.correctAnswer;
-                                            const wasSelected = option === answer.selectedAnswer;
+                                            const isCorrectOption = option === question.answer;
+                                            const wasSelected = option === (answer as any).selectedAnswer;
                                             const isWrongSelection = wasSelected && !answer.isCorrect;
 
                                             let style: React.CSSProperties;
