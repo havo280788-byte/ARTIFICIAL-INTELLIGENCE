@@ -59,9 +59,9 @@ export default function MatchingGame({ items, onComplete, mode = 'student' }: Ma
         padding: '12px',
         borderRadius: '12px',
         border: '2px solid',
-        borderColor: isMatched ? '#10B981' : isSelected ? '#6366F1' : 'rgba(255,255,255,0.1)',
-        background: isMatched ? 'rgba(16,185,129,0.1)' : isSelected ? 'rgba(99,102,241,0.1)' : 'rgba(255,255,255,0.03)',
-        color: isMatched ? '#6EE7B7' : isSelected ? '#F1F5F9' : '#94A3B8',
+        borderColor: isMatched ? '#10B981' : isSelected ? '#DC2626' : 'rgba(255,255,255,0.06)',
+        background: isMatched ? 'rgba(16,185,129,0.08)' : isSelected ? 'rgba(220,38,38,0.08)' : 'rgba(255,255,255,0.02)',
+        color: isMatched ? '#6EE7B7' : isSelected ? '#F5F5F5' : '#888',
         cursor: isMatched ? 'default' : 'pointer',
         transition: 'all 0.2s',
         display: 'flex',
@@ -70,6 +70,7 @@ export default function MatchingGame({ items, onComplete, mode = 'student' }: Ma
         textAlign: 'center' as const,
         minHeight: '80px',
         opacity: isMatched ? 0.6 : 1,
+        boxShadow: isSelected ? '0 0 12px rgba(220,38,38,0.2)' : 'none',
     });
 
     return (
@@ -77,7 +78,7 @@ export default function MatchingGame({ items, onComplete, mode = 'student' }: Ma
             <div className="grid grid-cols-3 gap-6">
                 {/* Column 1: Images */}
                 <div className="space-y-4">
-                    <h3 className="text-center font-bold text-sky-400 uppercase tracking-wider text-sm mb-2">Images</h3>
+                    <h3 className="text-center font-bold text-[#DC2626] uppercase tracking-wider text-sm mb-2">Hình Ảnh</h3>
                     {shuffledImages.map(item => {
                         const isMatched = matchedIds.includes(item.id);
                         const isSelected = selectedImage === item.id;
@@ -98,7 +99,7 @@ export default function MatchingGame({ items, onComplete, mode = 'student' }: Ma
 
                 {/* Column 2: Word Set 1 */}
                 <div className="space-y-4">
-                    <h3 className="text-center font-bold text-indigo-400 uppercase tracking-wider text-sm mb-2">Word Set 1</h3>
+                    <h3 className="text-center font-bold text-[#EF4444] uppercase tracking-wider text-sm mb-2">Từ Tiếng Anh</h3>
                     {shuffledWord1s.map(item => {
                         const isMatched = matchedIds.includes(item.id);
                         const isSelected = selectedWord1 === item.id;
@@ -119,7 +120,7 @@ export default function MatchingGame({ items, onComplete, mode = 'student' }: Ma
 
                 {/* Column 3: Word Set 2 */}
                 <div className="space-y-4">
-                    <h3 className="text-center font-bold text-purple-400 uppercase tracking-wider text-sm mb-2">Word Set 2</h3>
+                    <h3 className="text-center font-bold text-[#F87171] uppercase tracking-wider text-sm mb-2">Từ Tiếng Việt</h3>
                     {shuffledWord2s.map(item => {
                         const isMatched = matchedIds.includes(item.id);
                         const isSelected = selectedWord2 === item.id;
@@ -145,13 +146,13 @@ export default function MatchingGame({ items, onComplete, mode = 'student' }: Ma
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mt-8 text-red-400 font-bold"
                 >
-                    Try again! Not a match.
+                    Thử lại! Chưa khớp.
                 </motion.div>
             )}
 
             {matchedIds.length > 0 && matchedIds.length < items.length && (
                 <div className="text-center mt-8 text-emerald-400 font-bold">
-                    {matchedIds.length} / {items.length} matched
+                    {matchedIds.length} / {items.length} đã ghép
                 </div>
             )}
         </div>

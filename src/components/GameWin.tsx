@@ -24,10 +24,10 @@ export default function GameWin({ playerName, score, totalQuestions, elapsedSeco
     const accuracy = Math.round((score / totalQuestions) * 100);
 
     const getBadge = () => {
-        if (accuracy >= 90) return { label: 'AI Reading Pro', icon: '🏅', from: '#F59E0B', to: '#D97706' };
-        if (accuracy >= 80) return { label: 'AI Analyst', icon: '📊', from: '#22D3EE', to: '#0284C7' };
-        if (accuracy >= 60) return { label: 'AI Explorer', icon: '🔍', from: '#8B5CF6', to: '#6D28D9' };
-        return { label: 'AI Beginner', icon: '🌱', from: '#10B981', to: '#059669' };
+        if (accuracy >= 90) return { label: 'Chiến Thần', icon: '🏅', from: '#F59E0B', to: '#D97706' };
+        if (accuracy >= 80) return { label: 'Cao Thủ', icon: '📊', from: '#DC2626', to: '#991B1B' };
+        if (accuracy >= 60) return { label: 'Thám Tử', icon: '🔍', from: '#EF4444', to: '#B91C1C' };
+        return { label: 'Tân Binh', icon: '🌱', from: '#10B981', to: '#059669' };
     };
 
     const badge = getBadge();
@@ -51,12 +51,12 @@ export default function GameWin({ playerName, score, totalQuestions, elapsedSeco
                     {/* Top accent */}
                     <div
                         className="absolute top-0 left-0 right-0 h-[2px]"
-                        style={{ background: 'linear-gradient(90deg, transparent, #22D3EE, #6366F1, #8B5CF6, transparent)' }}
+                        style={{ background: 'linear-gradient(90deg, transparent, #DC2626, #EF4444, #DC2626, transparent)' }}
                     />
                     {/* Ambient glow */}
                     <div
                         className="absolute -top-12 left-1/2 -translate-x-1/2 w-56 h-28 pointer-events-none"
-                        style={{ background: 'radial-gradient(ellipse, rgba(16,185,129,0.12) 0%, transparent 70%)' }}
+                        style={{ background: 'radial-gradient(ellipse, rgba(16,185,129,0.08) 0%, transparent 70%)' }}
                     />
 
                     {/* Checkmark icon */}
@@ -69,7 +69,7 @@ export default function GameWin({ playerName, score, totalQuestions, elapsedSeco
                         <div
                             className="w-16 h-16 rounded-full flex items-center justify-center"
                             style={{
-                                background: 'rgba(16,185,129,0.12)',
+                                background: 'rgba(16,185,129,0.1)',
                                 border: '2px solid #10B981',
                                 boxShadow: '0 0 24px rgba(16,185,129,0.35)',
                             }}
@@ -83,33 +83,33 @@ export default function GameWin({ playerName, score, totalQuestions, elapsedSeco
                     {/* Title */}
                     <div className="text-center mb-1">
                         <h1
-                            className="text-2xl font-black uppercase tracking-tight"
-                            style={{ color: '#F1F5F9' }}
+                            className="text-2xl font-black uppercase tracking-tight font-orbitron"
+                            style={{ color: '#F5F5F5' }}
                         >
-                            Challenge Completed!
+                            Hoàn Thành!
                         </h1>
-                        <p className="text-sm mt-1" style={{ color: '#64748B' }}>
-                            Well done, <span style={{ color: '#94A3B8' }}>{playerName}</span>!
+                        <p className="text-sm mt-1" style={{ color: '#555' }}>
+                            Tuyệt vời, <span style={{ color: '#B0B0B0' }}>{playerName}</span>!
                         </p>
                     </div>
 
                     {/* Divider */}
-                    <div className="h-px my-5" style={{ background: 'rgba(255,255,255,0.06)' }} />
+                    <div className="h-px my-5" style={{ background: 'rgba(255,255,255,0.04)' }} />
 
                     {/* Stats */}
                     <div className="grid grid-cols-3 gap-3 mb-6">
                         {/* Accuracy */}
                         <div
                             className="rounded-xl p-3.5 text-center"
-                            style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+                            style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
                         >
-                            <div className="text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: '#475569' }}>
-                                Accuracy
+                            <div className="text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: '#444' }}>
+                                Độ Chính Xác
                             </div>
                             <div className="text-2xl font-black" style={{ color: getAccuracyColor() }}>
                                 {accuracy}%
                             </div>
-                            <div className="text-[10px] mt-0.5" style={{ color: '#475569' }}>
+                            <div className="text-[10px] mt-0.5" style={{ color: '#444' }}>
                                 {score}/{totalQuestions}
                             </div>
                         </div>
@@ -117,12 +117,12 @@ export default function GameWin({ playerName, score, totalQuestions, elapsedSeco
                         {/* Time */}
                         <div
                             className="rounded-xl p-3.5 text-center"
-                            style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+                            style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
                         >
-                            <div className="text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: '#475569' }}>
-                                Time
+                            <div className="text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: '#444' }}>
+                                Thời Gian
                             </div>
-                            <div className="text-2xl font-black font-mono" style={{ color: '#22D3EE' }}>
+                            <div className="text-2xl font-black font-mono" style={{ color: '#DC2626' }}>
                                 {formatTime(elapsedSeconds)}
                             </div>
                         </div>
@@ -136,7 +136,7 @@ export default function GameWin({ playerName, score, totalQuestions, elapsedSeco
                             }}
                         >
                             <div className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: badge.from }}>
-                                Badge
+                                Danh Hiệu
                             </div>
                             <div className="text-xl mb-0.5">{badge.icon}</div>
                             <div className="text-[9px] font-bold leading-tight" style={{ color: badge.from }}>
@@ -155,13 +155,13 @@ export default function GameWin({ playerName, score, totalQuestions, elapsedSeco
                                 onClick={onLeaderboard}
                                 className="w-full py-3.5 text-white font-black rounded-xl text-sm uppercase tracking-widest relative overflow-hidden"
                                 style={{
-                                    background: 'linear-gradient(135deg, #06B6D4 0%, #6366F1 55%, #8B5CF6 100%)',
-                                    boxShadow: '0 4px 20px rgba(99,102,241,0.45)',
+                                    background: 'linear-gradient(135deg, #991B1B 0%, #DC2626 55%, #EF4444 100%)',
+                                    boxShadow: '0 4px 20px rgba(220,38,38,0.45)',
                                 }}
-                                onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 6px 28px rgba(99,102,241,0.6)'; }}
-                                onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(99,102,241,0.45)'; }}
+                                onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 6px 28px rgba(220,38,38,0.6)'; }}
+                                onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(220,38,38,0.45)'; }}
                             >
-                                🏆 View Leaderboard
+                                🏆 Bảng Xếp Hạng
                             </motion.button>
 
                             {/* Secondary: Review */}
@@ -171,24 +171,22 @@ export default function GameWin({ playerName, score, totalQuestions, elapsedSeco
                                 onClick={onReview}
                                 className="w-full py-3.5 font-bold rounded-xl text-sm uppercase tracking-widest transition-all duration-200"
                                 style={{
-                                    background: 'rgba(255,255,255,0.04)',
-                                    border: '1px solid rgba(255,255,255,0.12)',
-                                    color: '#94A3B8',
+                                    background: 'rgba(255,255,255,0.03)',
+                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    color: '#888',
                                 }}
                                 onMouseEnter={e => {
-                                    e.currentTarget.style.background = 'rgba(255,255,255,0.08)';
-                                    e.currentTarget.style.borderColor = 'rgba(34,211,238,0.3)';
-                                    e.currentTarget.style.color = '#22D3EE';
-                                    e.currentTarget.style.boxShadow = '0 0 12px rgba(34,211,238,0.1)';
+                                    e.currentTarget.style.background = 'rgba(220,38,38,0.06)';
+                                    e.currentTarget.style.borderColor = 'rgba(220,38,38,0.25)';
+                                    e.currentTarget.style.color = '#DC2626';
                                 }}
                                 onMouseLeave={e => {
-                                    e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
-                                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)';
-                                    e.currentTarget.style.color = '#94A3B8';
-                                    e.currentTarget.style.boxShadow = 'none';
+                                    e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                                    e.currentTarget.style.color = '#888';
                                 }}
                             >
-                                🔍 Review Answers
+                                🔍 Xem Lại Đáp Án
                             </motion.button>
                         </div>
                     )}
@@ -199,12 +197,12 @@ export default function GameWin({ playerName, score, totalQuestions, elapsedSeco
                             onClick={onLeaderboard}
                             className="w-full py-3.5 font-bold rounded-xl text-sm uppercase tracking-widest"
                             style={{
-                                background: 'rgba(255,255,255,0.05)',
-                                border: '1px solid rgba(255,255,255,0.1)',
-                                color: '#64748B',
+                                background: 'rgba(255,255,255,0.03)',
+                                border: '1px solid rgba(255,255,255,0.06)',
+                                color: '#555',
                             }}
                         >
-                            🏆 View Leaderboard
+                            🏆 Bảng Xếp Hạng
                         </button>
                     )}
                 </div>

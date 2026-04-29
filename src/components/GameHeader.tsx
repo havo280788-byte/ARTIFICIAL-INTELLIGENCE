@@ -55,9 +55,9 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
         <div
             className="w-full text-white px-4 py-3 md:px-6 md:py-4 flex flex-col gap-3"
             style={{
-                background: 'linear-gradient(180deg, #020818 0%, #0A0F1E 100%)',
-                borderBottom: '1px solid rgba(34,211,238,0.08)',
-                boxShadow: '0 4px 32px rgba(0,0,0,0.6)',
+                background: 'linear-gradient(180deg, #000000 0%, #0A0A0A 100%)',
+                borderBottom: '1px solid rgba(220,38,38,0.08)',
+                boxShadow: '0 4px 32px rgba(0,0,0,0.8)',
             }}
         >
             {/* Top Row */}
@@ -67,23 +67,21 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                     <div
                         className="w-9 h-9 rounded-xl flex items-center justify-center text-xl shrink-0"
                         style={{
-                            background: 'rgba(34,211,238,0.08)',
-                            border: '1px solid rgba(34,211,238,0.2)',
-                            boxShadow: '0 0 12px rgba(34,211,238,0.2)',
+                            background: 'rgba(220,38,38,0.08)',
+                            border: '1px solid rgba(220,38,38,0.2)',
+                            boxShadow: '0 0 12px rgba(220,38,38,0.2)',
                         }}
                     >
-                        🤖
+                        ⚔️
                     </div>
                     <div>
-
-                        <h1 className="text-sm md:text-xl font-black uppercase tracking-tight leading-tight">
-                            <span style={{ color: '#22D3EE' }}>WORD</span>
-                            <span className="text-[#CBD5E1]"> – Matching</span>
+                        <h1 className="text-sm md:text-xl font-black uppercase tracking-tight leading-tight font-orbitron">
+                            <span style={{ color: '#DC2626' }}>ĐẤU TRƯỜNG</span>
+                            <span className="text-[#888]"> BẢN LĨNH</span>
                         </h1>
-                        <p className="text-[10px] md:text-xs text-[#334155] uppercase tracking-widest hidden md:block font-semibold">
-                            Vocabulary Challenge
+                        <p className="text-[10px] md:text-xs text-[#333] uppercase tracking-widest hidden md:block font-semibold">
+                            Thử Thách Từ Vựng
                         </p>
-
                     </div>
                 </div>
 
@@ -95,15 +93,15 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                             transition={{ duration: 0.8, repeat: Infinity }}
                             className="flex items-center gap-2 px-3 py-1.5 rounded-full"
                             style={{
-                                background: isWarning ? 'rgba(220,38,38,0.1)' : 'rgba(34,211,238,0.06)',
-                                border: isWarning ? '1px solid rgba(220,38,38,0.3)' : '1px solid rgba(34,211,238,0.15)',
+                                background: isWarning ? 'rgba(220,38,38,0.1)' : 'rgba(255,255,255,0.04)',
+                                border: isWarning ? '1px solid rgba(220,38,38,0.3)' : '1px solid rgba(255,255,255,0.08)',
                                 boxShadow: isWarning ? '0 0 12px rgba(220,38,38,0.2)' : 'none',
                             }}
                         >
-                            <span className="text-sm" style={{ color: isWarning ? '#F87171' : '#22D3EE' }}>⏱</span>
+                            <span className="text-sm" style={{ color: isWarning ? '#F87171' : '#DC2626' }}>⏱</span>
                             <span
                                 className="font-mono text-lg md:text-2xl font-bold tracking-wider"
-                                style={{ color: isWarning ? '#F87171' : '#F1F5F9' }}
+                                style={{ color: isWarning ? '#F87171' : '#F5F5F5' }}
                             >
                                 {formatTime(timeLeft)}
                             </span>
@@ -119,7 +117,7 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                             >
                                 <span className="text-sm md:text-base">🟢</span>
                                 <span className="text-xs md:text-sm font-bold text-[#6EE7B7] uppercase tracking-wider whitespace-nowrap">
-                                    Teacher Mode
+                                    Chế Độ Giáo Viên
                                 </span>
                             </div>
                             {/* Teacher quick actions */}
@@ -129,14 +127,14 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                                         onClick={onShowReview}
                                         className="px-3 py-1.5 text-xs font-bold rounded-lg uppercase tracking-wider transition-all duration-150"
                                         style={{
-                                            background: 'rgba(255,255,255,0.04)',
-                                            border: '1px solid rgba(255,255,255,0.08)',
-                                            color: '#64748B',
+                                            background: 'rgba(255,255,255,0.03)',
+                                            border: '1px solid rgba(255,255,255,0.06)',
+                                            color: '#555',
                                         }}
-                                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.12)'; e.currentTarget.style.borderColor = 'rgba(99,102,241,0.3)'; e.currentTarget.style.color = '#A5B4FC'; }}
-                                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = '#64748B'; }}
+                                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.1)'; e.currentTarget.style.borderColor = 'rgba(220,38,38,0.3)'; e.currentTarget.style.color = '#F87171'; }}
+                                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = '#555'; }}
                                     >
-                                        Review
+                                        Xem Lại
                                     </button>
                                 )}
                                 {onShowLeaderboard && (
@@ -144,31 +142,31 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                                         onClick={onShowLeaderboard}
                                         className="px-3 py-1.5 text-xs font-bold rounded-lg uppercase tracking-wider transition-all duration-150"
                                         style={{
-                                            background: 'rgba(255,255,255,0.04)',
-                                            border: '1px solid rgba(255,255,255,0.08)',
-                                            color: '#64748B',
+                                            background: 'rgba(255,255,255,0.03)',
+                                            border: '1px solid rgba(255,255,255,0.06)',
+                                            color: '#555',
                                         }}
-                                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.12)'; e.currentTarget.style.borderColor = 'rgba(99,102,241,0.3)'; e.currentTarget.style.color = '#A5B4FC'; }}
-                                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = '#64748B'; }}
+                                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.1)'; e.currentTarget.style.borderColor = 'rgba(220,38,38,0.3)'; e.currentTarget.style.color = '#F87171'; }}
+                                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = '#555'; }}
                                     >
-                                        Leaderboard
+                                        Bảng Xếp Hạng
                                     </button>
                                 )}
                                 {/* Fullscreen button – desktop Teacher View only */}
                                 <button
                                     onClick={toggleFullscreen}
-                                    title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+                                    title={isFullscreen ? 'Thoát Toàn Màn Hình' : 'Toàn Màn Hình'}
                                     className="px-3 py-1.5 text-xs font-bold rounded-lg uppercase tracking-wider transition-all duration-150 flex items-center gap-1.5"
                                     style={{
-                                        background: isFullscreen ? 'rgba(34,211,238,0.10)' : 'rgba(255,255,255,0.04)',
-                                        border: isFullscreen ? '1px solid rgba(34,211,238,0.35)' : '1px solid rgba(255,255,255,0.08)',
-                                        color: isFullscreen ? '#22D3EE' : '#64748B',
+                                        background: isFullscreen ? 'rgba(220,38,38,0.10)' : 'rgba(255,255,255,0.03)',
+                                        border: isFullscreen ? '1px solid rgba(220,38,38,0.35)' : '1px solid rgba(255,255,255,0.06)',
+                                        color: isFullscreen ? '#DC2626' : '#555',
                                     }}
-                                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(34,211,238,0.12)'; e.currentTarget.style.borderColor = 'rgba(34,211,238,0.4)'; e.currentTarget.style.color = '#22D3EE'; }}
+                                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.12)'; e.currentTarget.style.borderColor = 'rgba(220,38,38,0.4)'; e.currentTarget.style.color = '#DC2626'; }}
                                     onMouseLeave={e => {
-                                        e.currentTarget.style.background = isFullscreen ? 'rgba(34,211,238,0.10)' : 'rgba(255,255,255,0.04)';
-                                        e.currentTarget.style.borderColor = isFullscreen ? 'rgba(34,211,238,0.35)' : 'rgba(255,255,255,0.08)';
-                                        e.currentTarget.style.color = isFullscreen ? '#22D3EE' : '#64748B';
+                                        e.currentTarget.style.background = isFullscreen ? 'rgba(220,38,38,0.10)' : 'rgba(255,255,255,0.03)';
+                                        e.currentTarget.style.borderColor = isFullscreen ? 'rgba(220,38,38,0.35)' : 'rgba(255,255,255,0.06)';
+                                        e.currentTarget.style.color = isFullscreen ? '#DC2626' : '#555';
                                     }}
                                 >
                                     {isFullscreen ? (
@@ -182,7 +180,7 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                                             <path d="M21 17v2a2 2 0 0 1-2 2h-2" /><path d="M7 21H5a2 2 0 0 1-2-2v-2" />
                                         </svg>
                                     )}
-                                    {isFullscreen ? 'Exit' : 'Fullscreen'}
+                                    {isFullscreen ? 'Thu Nhỏ' : 'Phóng To'}
                                 </button>
                             </div>
                         </div>
@@ -195,14 +193,14 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                 {/* Background line */}
                 <div
                     className="absolute top-1/2 left-0 w-full h-px -translate-y-1/2"
-                    style={{ background: 'rgba(255,255,255,0.06)' }}
+                    style={{ background: 'rgba(255,255,255,0.04)' }}
                 />
                 {/* Progress line */}
                 <motion.div
                     className="absolute top-1/2 left-0 h-px -translate-y-1/2"
                     style={{
-                        background: 'linear-gradient(90deg, #22D3EE, #6366F1)',
-                        boxShadow: '0 0 8px rgba(34,211,238,0.5)',
+                        background: 'linear-gradient(90deg, #991B1B, #DC2626, #EF4444)',
+                        boxShadow: '0 0 8px rgba(220,38,38,0.5)',
                     }}
                     initial={{ width: '0%' }}
                     animate={{ width: `${(currentStage / (STAGES.length - 1)) * 100}%` }}
@@ -227,7 +225,7 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                             >
                                 {isActive && (
                                     <span
-                                        className="absolute inset-0 rounded-full border border-[#22D3EE]/50"
+                                        className="absolute inset-0 rounded-full border border-[#DC2626]/50"
                                         style={{
                                             animation: 'pulseRing 2s ease-out infinite',
                                             transform: 'scale(1.5)',
@@ -238,16 +236,16 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                                     className="w-7 h-7 md:w-9 md:h-9 rounded-full flex items-center justify-center text-sm md:text-lg border-2 transition-all duration-300 relative"
                                     style={{
                                         ...(isActive ? {
-                                            background: 'rgba(34,211,238,0.2)',
-                                            borderColor: '#22D3EE',
-                                            boxShadow: '0 0 12px rgba(34,211,238,0.8), 0 0 24px rgba(34,211,238,0.4)',
+                                            background: 'rgba(220,38,38,0.2)',
+                                            borderColor: '#DC2626',
+                                            boxShadow: '0 0 12px rgba(220,38,38,0.8), 0 0 24px rgba(220,38,38,0.4)',
                                         } : isCompleted ? {
-                                            background: 'rgba(99,102,241,0.15)',
-                                            borderColor: 'rgba(99,102,241,0.4)',
+                                            background: 'rgba(220,38,38,0.1)',
+                                            borderColor: 'rgba(220,38,38,0.3)',
                                             opacity: 0.85,
                                         } : {
-                                            background: 'rgba(255,255,255,0.03)',
-                                            borderColor: 'rgba(255,255,255,0.06)',
+                                            background: 'rgba(255,255,255,0.02)',
+                                            borderColor: 'rgba(255,255,255,0.05)',
                                             opacity: 0.4,
                                         })
                                     }}

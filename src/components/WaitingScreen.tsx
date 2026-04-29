@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 export default function WaitingScreen() {
     return (
-        <div className="min-h-screen bg-[#0F172A] flex flex-col items-center justify-center p-6 text-center select-none">
+        <div className="min-h-screen bg-[#000] flex flex-col items-center justify-center p-6 text-center select-none">
             <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -19,13 +19,13 @@ export default function WaitingScreen() {
                     ⏳
                 </motion.div>
 
-                <h1 className="text-3xl md:text-4xl font-black text-white mb-4 uppercase tracking-tight">
-                    Wait for the teacher!!!!
+                <h1 className="text-3xl md:text-4xl font-black text-white mb-4 uppercase tracking-tight font-orbitron">
+                    Chờ giáo viên!!!!
                 </h1>
 
-                <p className="text-[#94A3B8] text-base md:text-lg mb-10 leading-relaxed">
-                    Your answers have been submitted.<br />
-                    Please wait patiently for your teacher to review the results.
+                <p className="text-[#888] text-base md:text-lg mb-10 leading-relaxed">
+                    Bài làm đã được nộp.<br />
+                    Vui lòng đợi giáo viên xem kết quả.
                 </p>
 
                 {/* Pulsing dots indicator */}
@@ -33,7 +33,7 @@ export default function WaitingScreen() {
                     {[0, 1, 2].map(i => (
                         <motion.div
                             key={i}
-                            className="w-3 h-3 rounded-full bg-cyan-400"
+                            className="w-3 h-3 rounded-full bg-[#DC2626]"
                             animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
                             transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.3 }}
                         />

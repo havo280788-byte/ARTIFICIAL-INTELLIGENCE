@@ -19,13 +19,13 @@ type ViewMode = 'student' | 'teacher';
 
 interface LeaderboardProps {
     onBack: () => void;
-    currentPlayerName?: string;   // student's own name for highlight
-    onViewMyAttempt?: () => void; // callback to open student's own review
+    currentPlayerName?: string;
+    onViewMyAttempt?: () => void;
 }
 
 const cardStyle: React.CSSProperties = {
-    background: 'rgba(10,15,30,0.85)',
-    border: '1px solid rgba(255,255,255,0.08)',
+    background: 'rgba(10,10,10,0.9)',
+    border: '1px solid rgba(255,255,255,0.06)',
     borderRadius: '20px',
     overflow: 'hidden',
     backdropFilter: 'blur(12px)',
@@ -33,7 +33,7 @@ const cardStyle: React.CSSProperties = {
 
 const headerStyle: React.CSSProperties = {
     padding: '12px 20px',
-    borderBottom: '1px solid rgba(255,255,255,0.06)',
+    borderBottom: '1px solid rgba(255,255,255,0.04)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -127,21 +127,16 @@ export default function Leaderboard({ onBack, currentPlayerName, onViewMyAttempt
         return { completionRate, avgAccuracy, fastestTime, questionRates, hardest, totalTeams: data.length };
     }, [data]);
 
-    // --- CORRECTED Skills Breakdown ---
-    // Scanning: q1,q2,q3,q4,q8 (5 câu)
-    // Supporting Details: q5 (1 câu)
-    // Pronoun Reference: q6 (1 câu)
-    // Identifying Main Idea: q7 (1 câu)
-    // Making Inferences: q9 (1 câu)
+    // --- Skills Breakdown ---
     const skillsBreakdown = useMemo(() => {
         if (!analytics || analytics.questionRates.length === 0) return [];
 
         const skills = [
-            { name: 'Scanning', icon: '🔍', questions: ['q1', 'q2', 'q3', 'q4', 'q8'], color: '#22D3EE' },
-            { name: 'Supporting Details', icon: '📋', questions: ['q5'], color: '#6366F1' },
-            { name: 'Pronoun Reference', icon: '🔗', questions: ['q6'], color: '#8B5CF6' },
-            { name: 'Identifying Main Idea', icon: '💡', questions: ['q7'], color: '#F59E0B' },
-            { name: 'Making Inferences', icon: '🧠', questions: ['q9'], color: '#10B981' },
+            { name: 'Quét Thông Tin', icon: '🔍', questions: ['q1', 'q2', 'q3', 'q4', 'q8'], color: '#DC2626' },
+            { name: 'Chi Tiết Hỗ Trợ', icon: '📋', questions: ['q5'], color: '#EF4444' },
+            { name: 'Tham Chiếu Đại Từ', icon: '🔗', questions: ['q6'], color: '#F87171' },
+            { name: 'Ý Chính', icon: '💡', questions: ['q7'], color: '#F59E0B' },
+            { name: 'Suy Luận', icon: '🧠', questions: ['q9'], color: '#10B981' },
         ];
 
         return skills.map(skill => {
@@ -160,7 +155,7 @@ export default function Leaderboard({ onBack, currentPlayerName, onViewMyAttempt
             <div className="min-h-screen animated-gradient-bg flex items-center justify-center">
                 <div className="text-white text-center">
                     <div className="text-4xl mb-4 animate-pulse">⏳</div>
-                    <p className="text-sm" style={{ color: '#94A3B8' }}>Loading leaderboard...</p>
+                    <p className="text-sm" style={{ color: '#888' }}>Đang tải bảng xếp hạng...</p>
                 </div>
             </div>
         );
@@ -171,7 +166,7 @@ export default function Leaderboard({ onBack, currentPlayerName, onViewMyAttempt
         if (i === 0) return { bg: 'rgba(245,158,11,0.15)', border: 'rgba(245,158,11,0.35)', text: '#F59E0B' };
         if (i === 1) return { bg: 'rgba(148,163,184,0.1)', border: 'rgba(148,163,184,0.3)', text: '#94A3B8' };
         if (i === 2) return { bg: 'rgba(180,97,25,0.15)', border: 'rgba(180,97,25,0.35)', text: '#D97706' };
-        return { bg: 'rgba(255,255,255,0.04)', border: 'rgba(255,255,255,0.08)', text: '#475569' };
+        return { bg: 'rgba(255,255,255,0.03)', border: 'rgba(255,255,255,0.06)', text: '#444' };
     };
 
     return (
@@ -185,21 +180,21 @@ export default function Leaderboard({ onBack, currentPlayerName, onViewMyAttempt
                 <div style={{ ...cardStyle, marginBottom: '16px', borderRadius: '20px' }}>
                     <div style={{ ...headerStyle, padding: '16px 24px' }}>
                         {/* Top accent */}
-                        <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: 'linear-gradient(90deg, transparent, #22D3EE, #6366F1, transparent)' }} />
+                        <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: 'linear-gradient(90deg, transparent, #DC2626, #EF4444, transparent)' }} />
 
                         <div className="flex items-center gap-3">
                             <div
                                 className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
-                                style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.25)' }}
+                                style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)' }}
                             >
                                 🏆
                             </div>
                             <div>
-                                <h1 className="text-lg font-black uppercase tracking-wider" style={{ color: '#F1F5F9' }}>
-                                    Leaderboard
+                                <h1 className="text-lg font-black uppercase tracking-wider font-orbitron" style={{ color: '#F5F5F5' }}>
+                                    Bảng Xếp Hạng
                                 </h1>
-                                <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: '#334155' }}>
-                                    Top 10 · AI Reading Challenge
+                                <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: '#333' }}>
+                                    Top 10 · Đấu Trường Bản Lĩnh
                                 </p>
                             </div>
                         </div>
@@ -207,7 +202,7 @@ export default function Leaderboard({ onBack, currentPlayerName, onViewMyAttempt
                         {/* View Mode Toggle */}
                         <div
                             className="flex rounded-xl p-1"
-                            style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+                            style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
                         >
                             {(['student', 'teacher'] as ViewMode[]).map(m => (
                                 <button
@@ -215,12 +210,12 @@ export default function Leaderboard({ onBack, currentPlayerName, onViewMyAttempt
                                     onClick={() => setViewMode(m)}
                                     className="px-4 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200"
                                     style={viewMode === m ? {
-                                        background: 'linear-gradient(135deg, #06B6D4, #6366F1)',
+                                        background: 'linear-gradient(135deg, #991B1B, #DC2626)',
                                         color: '#fff',
-                                        boxShadow: '0 2px 8px rgba(99,102,241,0.3)',
-                                    } : { color: '#475569' }}
+                                        boxShadow: '0 2px 8px rgba(220,38,38,0.3)',
+                                    } : { color: '#444' }}
                                 >
-                                    {m === 'student' ? '🎓 Student' : '👩‍🏫 Teacher'}
+                                    {m === 'student' ? '🎓 Học Sinh' : '👩‍🏫 Giáo Viên'}
                                 </button>
                             ))}
                         </div>
@@ -233,12 +228,12 @@ export default function Leaderboard({ onBack, currentPlayerName, onViewMyAttempt
                         {/* Column headers */}
                         <div
                             className="flex items-center justify-between px-6 py-2.5 text-[10px] font-bold uppercase tracking-widest"
-                            style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', color: '#334155' }}
+                            style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', color: '#333' }}
                         >
-                            <span>Rank & Student</span>
+                            <span>Hạng & Học Sinh</span>
                             <div className="flex gap-8">
-                                <span className="w-14 text-center">Score</span>
-                                <span className="w-14 text-center">Time</span>
+                                <span className="w-14 text-center">Điểm</span>
+                                <span className="w-14 text-center">Thời Gian</span>
                             </div>
                         </div>
 
@@ -257,9 +252,9 @@ export default function Leaderboard({ onBack, currentPlayerName, onViewMyAttempt
                                             transition={{ delay: index * 0.04 }}
                                             className="flex items-center justify-between px-6 py-3.5 relative"
                                             style={{
-                                                borderBottom: index < top10.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
-                                                background: isMe ? 'rgba(99,102,241,0.08)' : 'transparent',
-                                                borderLeft: isMe ? '2px solid rgba(99,102,241,0.5)' : '2px solid transparent',
+                                                borderBottom: index < top10.length - 1 ? '1px solid rgba(255,255,255,0.03)' : 'none',
+                                                background: isMe ? 'rgba(220,38,38,0.06)' : 'transparent',
+                                                borderLeft: isMe ? '2px solid rgba(220,38,38,0.5)' : '2px solid transparent',
                                             }}
                                         >
                                             <div className="flex items-center gap-3">
@@ -273,33 +268,33 @@ export default function Leaderboard({ onBack, currentPlayerName, onViewMyAttempt
 
                                                 {/* Name + class */}
                                                 <div>
-                                                    <div className="font-bold text-sm flex items-center gap-2" style={{ color: isMe ? '#A5B4FC' : '#CBD5E1' }}>
+                                                    <div className="font-bold text-sm flex items-center gap-2" style={{ color: isMe ? '#F87171' : '#B0B0B0' }}>
                                                         {entry.name}
                                                         {isMe && (
                                                             <span
                                                                 className="text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider"
-                                                                style={{ background: 'rgba(99,102,241,0.2)', color: '#818CF8', border: '1px solid rgba(99,102,241,0.3)' }}
+                                                                style={{ background: 'rgba(220,38,38,0.15)', color: '#F87171', border: '1px solid rgba(220,38,38,0.3)' }}
                                                             >
-                                                                You
+                                                                Bạn
                                                             </span>
                                                         )}
                                                     </div>
-                                                    <div className="text-[10px]" style={{ color: '#334155' }}>{entry.class}</div>
+                                                    <div className="text-[10px]" style={{ color: '#333' }}>{entry.class}</div>
                                                 </div>
                                             </div>
 
                                             <div className="flex items-center gap-5">
                                                 {/* Score */}
                                                 <div className="w-14 text-center">
-                                                    <span className="font-black text-sm" style={{ color: '#22D3EE' }}>
+                                                    <span className="font-black text-sm" style={{ color: '#DC2626' }}>
                                                         {entry.score ?? '–'}
                                                     </span>
-                                                    <span className="text-[10px]" style={{ color: '#334155' }}>
+                                                    <span className="text-[10px]" style={{ color: '#333' }}>
                                                         /{entry.totalQuestions ?? 9}
                                                     </span>
                                                 </div>
                                                 {/* Time */}
-                                                <div className="w-14 text-center font-mono font-bold text-sm" style={{ color: '#64748B' }}>
+                                                <div className="w-14 text-center font-mono font-bold text-sm" style={{ color: '#555' }}>
                                                     {formatTime(entry.time)}
                                                 </div>
                                                 {/* View My Attempt button (only for own row) */}
@@ -308,14 +303,14 @@ export default function Leaderboard({ onBack, currentPlayerName, onViewMyAttempt
                                                         onClick={onViewMyAttempt}
                                                         className="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all duration-150 whitespace-nowrap"
                                                         style={{
-                                                            background: 'rgba(99,102,241,0.12)',
-                                                            border: '1px solid rgba(99,102,241,0.3)',
-                                                            color: '#818CF8',
+                                                            background: 'rgba(220,38,38,0.1)',
+                                                            border: '1px solid rgba(220,38,38,0.25)',
+                                                            color: '#F87171',
                                                         }}
-                                                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.22)'; }}
-                                                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.12)'; }}
+                                                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.2)'; }}
+                                                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.1)'; }}
                                                     >
-                                                        View Attempt
+                                                        Xem Bài
                                                     </button>
                                                 )}
                                             </div>
@@ -323,8 +318,8 @@ export default function Leaderboard({ onBack, currentPlayerName, onViewMyAttempt
                                     );
                                 })
                             ) : (
-                                <div className="text-center py-16 text-sm italic" style={{ color: '#334155' }}>
-                                    No entries yet. Be the first to complete the challenge!
+                                <div className="text-center py-16 text-sm italic" style={{ color: '#333' }}>
+                                    Chưa có ai tham gia. Hãy là người đầu tiên hoàn thành thử thách!
                                 </div>
                             )}
                         </div>
@@ -332,21 +327,21 @@ export default function Leaderboard({ onBack, currentPlayerName, onViewMyAttempt
                         {/* Footer */}
                         <div
                             className="px-6 py-4 flex items-center justify-between"
-                            style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}
+                            style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}
                         >
-                            <span className="text-[11px]" style={{ color: '#334155' }}>{totalEntries} total entries</span>
+                            <span className="text-[11px]" style={{ color: '#333' }}>{totalEntries} lượt tham gia</span>
                             <button
                                 onClick={onBack}
                                 className="px-5 py-2 rounded-xl font-bold text-xs uppercase tracking-widest transition-all duration-200"
                                 style={{
-                                    background: 'rgba(255,255,255,0.04)',
-                                    border: '1px solid rgba(255,255,255,0.1)',
-                                    color: '#64748B',
+                                    background: 'rgba(255,255,255,0.03)',
+                                    border: '1px solid rgba(255,255,255,0.06)',
+                                    color: '#555',
                                 }}
-                                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = '#94A3B8'; }}
-                                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = '#64748B'; }}
+                                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = '#888'; }}
+                                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.color = '#555'; }}
                             >
-                                ← Back
+                                ← Quay Lại
                             </button>
                         </div>
                     </div>
@@ -358,23 +353,23 @@ export default function Leaderboard({ onBack, currentPlayerName, onViewMyAttempt
                         {/* Class Snapshot */}
                         <div style={cardStyle}>
                             <div style={headerStyle}>
-                                <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: '#22D3EE' }}>
-                                    📊 Class Snapshot
+                                <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: '#DC2626' }}>
+                                    📊 Tổng Quan Lớp
                                 </span>
                             </div>
                             <div className="p-5 grid grid-cols-2 md:grid-cols-4 gap-3">
                                 {[
-                                    { label: 'Teams Joined', value: analytics.totalTeams, color: '#F1F5F9' },
-                                    { label: 'Completion', value: `${analytics.completionRate}%`, color: '#10B981' },
-                                    { label: 'Avg Accuracy', value: `${analytics.avgAccuracy}%`, color: '#22D3EE' },
-                                    { label: 'Fastest (≥80%)', value: analytics.fastestTime !== null ? formatTime(analytics.fastestTime) : '—', color: '#F59E0B' },
+                                    { label: 'Số Đội', value: analytics.totalTeams, color: '#F5F5F5' },
+                                    { label: 'Hoàn Thành', value: `${analytics.completionRate}%`, color: '#10B981' },
+                                    { label: 'TB Chính Xác', value: `${analytics.avgAccuracy}%`, color: '#DC2626' },
+                                    { label: 'Nhanh Nhất (≥80%)', value: analytics.fastestTime !== null ? formatTime(analytics.fastestTime) : '—', color: '#F59E0B' },
                                 ].map(stat => (
                                     <div
                                         key={stat.label}
                                         className="rounded-xl p-4 text-center"
-                                        style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}
+                                        style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}
                                     >
-                                        <div className="text-[10px] uppercase font-bold tracking-wider mb-1.5" style={{ color: '#334155' }}>
+                                        <div className="text-[10px] uppercase font-bold tracking-wider mb-1.5" style={{ color: '#333' }}>
                                             {stat.label}
                                         </div>
                                         <div className="text-2xl font-black font-mono" style={{ color: stat.color }}>
@@ -388,23 +383,23 @@ export default function Leaderboard({ onBack, currentPlayerName, onViewMyAttempt
                         {/* Question Insights */}
                         <div style={cardStyle}>
                             <div style={headerStyle}>
-                                <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: '#22D3EE' }}>
-                                    📈 Question Insights
+                                <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: '#DC2626' }}>
+                                    📈 Phân Tích Câu Hỏi
                                 </span>
                                 {analytics.hardest.length > 0 && (
                                     <span
                                         className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                                        style={{ background: 'rgba(220,38,38,0.12)', color: '#F87171', border: '1px solid rgba(220,38,38,0.25)' }}
+                                        style={{ background: 'rgba(220,38,38,0.1)', color: '#F87171', border: '1px solid rgba(220,38,38,0.2)' }}
                                     >
-                                        Hardest: {analytics.hardest.map(h => h.label).join(', ')}
+                                        Khó nhất: {analytics.hardest.map(h => h.label).join(', ')}
                                     </span>
                                 )}
                             </div>
                             <div className="p-5 space-y-2.5">
                                 {analytics.questionRates.map((q) => (
                                     <div key={q.id} className="flex items-center gap-3">
-                                        <span className="text-xs font-bold w-8 shrink-0" style={{ color: '#475569' }}>{q.label}</span>
-                                        <div className="flex-1 h-5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                                        <span className="text-xs font-bold w-8 shrink-0" style={{ color: '#444' }}>{q.label}</span>
+                                        <div className="flex-1 h-5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)' }}>
                                             <motion.div
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${q.rate}%` }}
@@ -425,7 +420,7 @@ export default function Leaderboard({ onBack, currentPlayerName, onViewMyAttempt
                                             </motion.div>
                                         </div>
                                         {q.rate <= 15 && (
-                                            <span className="text-[10px] font-bold w-8" style={{ color: '#475569' }}>{q.rate}%</span>
+                                            <span className="text-[10px] font-bold w-8" style={{ color: '#444' }}>{q.rate}%</span>
                                         )}
                                     </div>
                                 ))}
@@ -435,8 +430,8 @@ export default function Leaderboard({ onBack, currentPlayerName, onViewMyAttempt
                         {/* Skills Breakdown */}
                         <div style={cardStyle}>
                             <div style={headerStyle}>
-                                <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: '#22D3EE' }}>
-                                    🧠 Skills Breakdown — AI Reading
+                                <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: '#DC2626' }}>
+                                    🧠 Phân Tích Kỹ Năng
                                 </span>
                             </div>
                             <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -444,16 +439,16 @@ export default function Leaderboard({ onBack, currentPlayerName, onViewMyAttempt
                                     <div
                                         key={skill.name}
                                         className="rounded-xl p-4"
-                                        style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}
+                                        style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}
                                     >
                                         <div className="flex items-center justify-between mb-2.5">
                                             <div className="flex items-center gap-2">
                                                 <span className="text-base">{skill.icon}</span>
-                                                <span className="text-xs font-bold" style={{ color: '#CBD5E1' }}>{skill.name}</span>
+                                                <span className="text-xs font-bold" style={{ color: '#B0B0B0' }}>{skill.name}</span>
                                             </div>
                                             <span className="text-sm font-black" style={{ color: skill.color }}>{skill.rate}%</span>
                                         </div>
-                                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
                                             <motion.div
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${skill.rate}%` }}
@@ -462,9 +457,9 @@ export default function Leaderboard({ onBack, currentPlayerName, onViewMyAttempt
                                                 style={{ backgroundColor: skill.color, boxShadow: `0 0 8px ${skill.color}60` }}
                                             />
                                         </div>
-                                        <div className="text-[10px] mt-1.5" style={{ color: '#334155' }}>
-                                            {skill.correct}/{skill.total} correct
-                                            <span className="ml-2" style={{ color: '#1E3A5F' }}>
+                                        <div className="text-[10px] mt-1.5" style={{ color: '#333' }}>
+                                            {skill.correct}/{skill.total} đúng
+                                            <span className="ml-2" style={{ color: '#222' }}>
                                                 · Q{skill.questions.map(q => q.replace('q', '')).join(', ')}
                                             </span>
                                         </div>
@@ -480,48 +475,48 @@ export default function Leaderboard({ onBack, currentPlayerName, onViewMyAttempt
                                     onClick={onBack}
                                     className="px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all"
                                     style={{
-                                        background: 'rgba(255,255,255,0.05)',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                        color: '#64748B',
+                                        background: 'rgba(255,255,255,0.03)',
+                                        border: '1px solid rgba(255,255,255,0.06)',
+                                        color: '#555',
                                     }}
-                                    onMouseEnter={e => { e.currentTarget.style.color = '#94A3B8'; }}
-                                    onMouseLeave={e => { e.currentTarget.style.color = '#64748B'; }}
+                                    onMouseEnter={e => { e.currentTarget.style.color = '#888'; }}
+                                    onMouseLeave={e => { e.currentTarget.style.color = '#555'; }}
                                 >
-                                    ← Back to Start
+                                    ← Quay Lại
                                 </button>
                                 {!resetConfirm ? (
                                     <button
                                         onClick={() => setResetConfirm(true)}
                                         className="px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all"
                                         style={{
-                                            background: 'rgba(220,38,38,0.1)',
-                                            border: '1px solid rgba(220,38,38,0.3)',
+                                            background: 'rgba(220,38,38,0.08)',
+                                            border: '1px solid rgba(220,38,38,0.25)',
                                             color: '#F87171',
                                         }}
-                                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.2)'; }}
-                                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.1)'; }}
+                                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.15)'; }}
+                                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.08)'; }}
                                     >
-                                        🗑 Reset Data
+                                        🗑 Xóa Dữ Liệu
                                     </button>
                                 ) : (
                                     <div
                                         className="flex items-center gap-2 rounded-xl px-4 py-2"
-                                        style={{ background: 'rgba(220,38,38,0.08)', border: '1px solid rgba(220,38,38,0.25)' }}
+                                        style={{ background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.2)' }}
                                     >
-                                        <span className="text-xs font-bold" style={{ color: '#F87171' }}>Are you sure?</span>
+                                        <span className="text-xs font-bold" style={{ color: '#F87171' }}>Bạn chắc chắn?</span>
                                         <button
                                             onClick={handleReset}
                                             className="px-3 py-1 rounded-lg text-xs font-bold text-white"
                                             style={{ background: '#DC2626' }}
                                         >
-                                            Yes, Reset
+                                            Xóa
                                         </button>
                                         <button
                                             onClick={() => setResetConfirm(false)}
                                             className="px-3 py-1 rounded-lg text-xs font-bold"
-                                            style={{ background: 'rgba(255,255,255,0.06)', color: '#64748B' }}
+                                            style={{ background: 'rgba(255,255,255,0.04)', color: '#555' }}
                                         >
-                                            Cancel
+                                            Hủy
                                         </button>
                                     </div>
                                 )}
@@ -532,13 +527,13 @@ export default function Leaderboard({ onBack, currentPlayerName, onViewMyAttempt
 
                 {viewMode === 'teacher' && !analytics && (
                     <div style={{ ...cardStyle, padding: '32px', textAlign: 'center' }}>
-                        <p style={{ color: '#334155', fontStyle: 'italic' }}>No data available yet for analytics.</p>
+                        <p style={{ color: '#333', fontStyle: 'italic' }}>Chưa có dữ liệu để phân tích.</p>
                         <button
                             onClick={onBack}
                             className="mt-4 px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest"
-                            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#64748B' }}
+                            style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', color: '#555' }}
                         >
-                            ← Back
+                            ← Quay Lại
                         </button>
                     </div>
                 )}
