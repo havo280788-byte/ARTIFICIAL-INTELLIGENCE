@@ -20,98 +20,96 @@ export interface Question {
     type?: string;
 }
 
-export const READING_PASSAGE = `Artificial Intelligence (AI) is the intelligence of machines or software, as opposed to the intelligence of humans or animals. It is a field of study in computer science that develops and studies intelligent machines. Such machines may be called AIs.
+export const READING_PASSAGE = `🛡️ LỜI HIỆU TRIỆU: ĐÁNH BẠI LÀN KHÓI ẢO 
 
-AI technology is widely used throughout industry, government, and science. Some high-profile applications are: advanced web search engines (e.g., Google Search), recommendation systems (used by YouTube, Amazon, and Netflix), understanding human speech (such as Siri and Alexa), self-driving cars (e.g., Waymo), generative or creative tools (ChatGPT and AI art), and playing games at the highest level (such as chess and Go).
+⚡ 1. Vượt qua 10 chặng thử thách, phá tan ma trận làn khói ảo!
 
-Many AI developers are concerned about the risks of AI. They worry that AI could be used to create deepfakes to influence elections, or that it could lead to job losses as machines replace human workers. However, many people also believe that AI can be used for good, such as helping to solve climate change or improving healthcare.
-
-In the future, AI is likely to become even more advanced. It may be used to create new types of robots that can help us in our daily lives, or to develop new treatments for diseases. The possibilities are endless, but it is important to use AI responsibly and to consider the potential risks.`;
+🛡️ 2. Kích hoạt bản lĩnh thép, kiên quyết nói "KHÔNG" để làm chủ tương lai!`;
 
 export const QUESTIONS: Question[] = [
     {
         id: 'q1',
-        question: 'What is Artificial Intelligence (AI)?',
-        options: ['The intelligence of machines or software', 'The intelligence of humans', 'A type of hardware', 'A new search engine'],
-        answer: 'The intelligence of machines or software',
+        question: 'Giai đoạn 2019–2023, tỷ lệ học sinh 13–17 tuổi tại Việt Nam dùng thuốc lá điện tử tăng từ 2,6% lên mức bao nhiêu?',
+        options: ['4,5%', '6,2%', '8,1%', '10,5%'],
+        answer: '8,1%',
         type: 'mcq'
     },
     {
         id: 'q2',
-        question: 'Which of the following is NOT a high-profile application of AI mentioned?',
-        options: ['Google Search', 'Netflix recommendations', 'Waymo self-driving cars', 'Traditional calculators'],
-        answer: 'Traditional calculators',
+        question: 'Đâu là những vật dụng thường được thuốc lá điện tử sử dụng để ngụy trang đánh lừa học sinh?',
+        options: ['Sách vở, hộp bút, thước kẻ.', 'USB, thỏi son, bút dạ quang, hộp sữa.', 'Điện thoại, tai nghe, đồng hồ.', 'Cặp sách, bình nước, hộp cơm.'],
+        answer: 'USB, thỏi son, bút dạ quang, hộp sữa.',
         type: 'mcq'
     },
     {
         id: 'q3',
-        question: 'What are some concerns many AI developers have?',
-        options: ['AI is too expensive', 'Deepfakes and job losses', 'AI is not intelligent enough', 'AI takes too long to develop'],
-        answer: 'Deepfakes and job losses',
+        question: 'Nhiều bạn trẻ lầm tưởng khói thuốc lá điện tử chỉ là " hơi nước sạch" không gây hại. Sự thật đằng sau những làn khói thơm này là gì?',
+        options: ['Là hơi nước tinh khiết 100%.', 'Là không khí có mùi trái cây vô hại.', 'Là hỗn hợp "sol khí" chứa Nicotine gây nghiện và nhiều hóa chất độc hại.', 'Là tinh dầu giúp làm sạch phổi.'],
+        answer: 'Là hỗn hợp "sol khí" chứa Nicotine gây nghiện và nhiều hóa chất độc hại.',
         type: 'mcq'
     },
     {
         id: 'q4',
-        question: 'According to the passage, how can AI be used for good?',
-        options: ['Playing games', 'Solving climate change', 'Creating art', 'Generating text'],
-        answer: 'Solving climate change',
+        question: 'Nicotine tác động trực tiếp vào hệ thần kinh trung ương để kích thích giải phóng Dopamine gây nghiện sau bao nhiêu giây?',
+        options: ['1 giây.', '10 giây.', '30 giây.', '60 giây.'],
+        answer: '10 giây.',
         type: 'mcq'
     },
     {
         id: 'q5',
-        question: 'What is likely to happen to AI in the future?',
-        options: ['It will disappear', 'It will become even more advanced', 'It will be used only for games', 'It will be banned'],
-        answer: 'It will become even more advanced',
+        question: 'Formaldehyde và Nitrosamines trong khói thuốc gây ra tổn thương nghiêm trọng nào ở cấp độ tế bào?',
+        options: ['Làm tăng nhịp tim tạm thời.', 'Gây cảm giác buồn ngủ.', 'Đứt gãy cấu trúc ADN và hình thành khối u.', 'Làm da bị khô và bong tróc.'],
+        answer: 'Đứt gãy cấu trúc ADN và hình thành khối u.',
         type: 'mcq'
     },
     {
         id: 'q6',
-        question: 'What does the passage say is important when using AI?',
-        options: ['Using it as much as possible', 'Using it for profit', 'Using it responsibly', 'Using it only for research'],
-        answer: 'Using it responsibly',
+        question: 'Tại sao rác thải từ các thiết bị thuốc lá điện tử dùng một lần (Pod) lại được coi là "khủng hoảng mới" đối với môi trường?',
+        options: ['Vì chúng làm từ quá nhiều giấy vụn.', 'Vì chúng chứa pin và vi mạch điện tử phát tán kim loại nặng kịch độc vào đất và nước.', 'Vì chúng có mùi thơm thu hút côn trùng đến phá hoại.', 'Vì chúng quá nhẹ nên dễ bị gió thổi bay đi khắp nơi.'],
+        answer: 'Vì chúng chứa pin và vi mạch điện tử phát tán kim loại nặng kịch độc vào đất và nước.',
         type: 'mcq'
     },
     {
         id: 'q7',
-        question: 'AI stands for...',
-        options: ['Actual Intelligence', 'Artificial Information', 'Artificial Intelligence', 'Automatic Intelligence'],
-        answer: 'Artificial Intelligence',
+        question: 'Theo Nghị định 90/2026/NĐ-CP, hành vi nào sau đây liên quan đến thuốc lá điện tử và thuốc lá nung nóng sẽ bị xử phạt nặng từ 5.000.000đ đến 10.000.000đ?',
+        options: ['Chỉ sử dụng thuốc lá điện tử tại nơi công cộng.', 'Chứa chấp, lôi kéo người khác sử dụng thuốc lá điện tử, thuốc lá nung nóng.', 'Mang thuốc lá điện tử theo người nhưng không sử dụng.', 'Tìm hiểu thông tin về thuốc lá điện tử trên mạng xã hội.'],
+        answer: 'Chứa chấp, lôi kéo người khác sử dụng thuốc lá điện tử, thuốc lá nung nóng.',
         type: 'mcq'
     },
     {
         id: 'q8',
-        question: 'What can Siri and Alexa do?',
-        options: ['Drive cars', 'Understand human speech', 'Solve climate change', 'Play Go'],
-        answer: 'Understand human speech',
+        question: 'Theo Nghị định 90/2026/NĐ-CP, mức xử phạt đối với hành vi SỬ DỤNG thuốc lá điện tử, thuốc lá nung nóng là bao nhiêu?',
+        options: ['500.000đ – 1.000.000đ.', '1.000.000đ – 2.000.000đ.', '3.000.000đ – 5.000.000đ.', '5.000.000đ – 10.000.000đ.'],
+        answer: '3.000.000đ – 5.000.000đ.',
         type: 'mcq'
     },
     {
         id: 'q9',
-        question: 'What is the main topic of the passage?',
-        options: ['The history of computers', 'The impact of AI on society', 'How to build a robot', 'The future of the internet'],
-        answer: 'The impact of AI on society',
+        question: 'Khi bị bạn bè rủ rê hoặc ép buộc thử thuốc lá điện tử, bước đầu tiên và quan trọng nhất là gì?',
+        options: ['Im lặng và bỏ qua.', 'Cố gắng giải thích về tác hại y khoa.', 'Nói "KHÔNG" dứt khoát, không mơ hồ.', 'Thử một chút để không bị coi là "nhát gan".'],
+        answer: 'Nói "KHÔNG" dứt khoát, không mơ hồ.',
         type: 'mcq'
     },
     {
         id: 'q10',
-        question: 'Which company is mentioned for advanced web search?',
-        options: ['Apple', 'Netflix', 'Google', 'Waymo'],
-        answer: 'Google',
+        question: 'Thông điệp cốt lõi của bài giảng "Hành trình Bản lĩnh" muốn gửi gắm đến học sinh là gì?',
+        options: ['Thuốc lá điện tử ít hại hơn thuốc lá truyền thống.', 'Chỉ nên hút khi cảm thấy căng thẳng.', 'Pháp luật chỉ cấm, không bảo vệ học sinh.', 'Bản lĩnh thật sự là làm chủ chính mình và nói không đúng lúc.'],
+        answer: 'Bản lĩnh thật sự là làm chủ chính mình và nói không đúng lúc.',
         type: 'mcq'
     }
 ];
 
 export const STAGES: Stage[] = [
-    { id: 1,  name: 'QUÉT RADAR',           icon: '🛰️' },
-    { id: 2,  name: 'BẪY NGỤY TRANG',       icon: '🎭' },
-    { id: 3,  name: 'COCKTAIL ĐỘC TỐ',      icon: '🧪' },
-    { id: 4,  name: 'THAO TÚNG THẦN KINH',   icon: '🧠' },
-    { id: 5,  name: 'PHẾ NANG RẠN NỨT',      icon: '🫁' },
-    { id: 6,  name: 'VÒNG TRÒN HỆ LỤY',     icon: '🏚️' },
-    { id: 7,  name: 'LÁ CHẮN THÉP',          icon: '⚖️' },
-    { id: 8,  name: 'RANH GIỚI ĐỎ',          icon: '⛔' },
-    { id: 9,  name: 'PHẢN ĐÒN BẢN LĨNH',    icon: '🛡️' },
-    { id: 10, name: 'ĐỈNH CAO TỈNH TÁO',    icon: '🏆' },
+    { id: 1,  name: 'TRUY QUÉT TẦN SỐ',     icon: '🛰️' },
+    { id: 2,  name: 'ẢO ẢNH NGỤY TRANG',    icon: '🎭' },
+    { id: 3,  name: 'CÔNG THỨC HỦY DIỆT',    icon: '🧪' },
+    { id: 4,  name: 'HÀNG RÀO TÂM TRÍ',      icon: '🧠' },
+    { id: 5,  name: 'HỆ THỐNG SUY KIỆT',     icon: '🫁' },
+    { id: 6,  name: 'MIỀN TRẮNG HỆ LỤY',     icon: '🏚️' },
+    { id: 7,  name: 'LẬP TRÌNH LÁ CHẮN',    icon: '⚖️' },
+    { id: 8,  name: 'GIỚI HẠN SINH TỒN',    icon: '⛔' },
+    { id: 9,  name: 'LỆNH TỪ CHỐI',         icon: '🛡️' },
+    { id: 10, name: 'BẢN LĨNH TỐI THƯỢNG', icon: '🏆' },
 ];
 
 

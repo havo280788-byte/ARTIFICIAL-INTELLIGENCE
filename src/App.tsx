@@ -23,38 +23,16 @@ export default function App() {
   const [screen, setScreen] = useState<'login' | 'game' | 'gameover' | 'win' | 'leaderboard' | 'review' | 'waiting'>('login');
   const [player, setPlayer] = useState({ name: '', className: '' });
   const [currentStage, setCurrentStage] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(8 * 60);
   const [score, setScore] = useState(0);
   const [answers, setAnswers] = useState<AnswerRecord[]>([]);
   const [mode, setMode] = useState<'student' | 'teacher'>('student');
+  // Timer removed as requested
   const timerRef = useRef<any>(null);
-
-  // Timer: only runs in student mode
-  useEffect(() => {
-    if (screen === 'game' && timeLeft > 0 && mode === 'student') {
-      timerRef.current = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            clearInterval(timerRef.current!);
-            setScreen('gameover');
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } else {
-      if (timerRef.current) clearInterval(timerRef.current);
-    }
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [screen, timeLeft, mode]);
 
   // Student start
   const handleStart = (name: string, className: string) => {
     setPlayer({ name, className });
     setCurrentStage(0);
-    setTimeLeft(8 * 60);
     setScore(0);
     setAnswers([]);
     setMode('student');
@@ -65,7 +43,6 @@ export default function App() {
   const handleTeacherStart = () => {
     setPlayer({ name: 'Teacher', className: '' });
     setCurrentStage(0);
-    setTimeLeft(8 * 60); // not used but reset
     setScore(0);
     setAnswers([]);
     setMode('teacher');
@@ -92,7 +69,7 @@ export default function App() {
     }
   };
 
-  const elapsedSeconds = (8 * 60) - timeLeft;
+  // Timer logic removed
 
   return (
     <div className="font-sans antialiased text-slate-900 bg-[#000000] min-h-screen">
@@ -107,7 +84,6 @@ export default function App() {
           <motion.div key="game" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col min-h-screen bg-[#000000]">
             <GameHeader
               currentStage={currentStage}
-              timeLeft={timeLeft}
               mode={mode}
               onShowLeaderboard={mode === 'teacher' ? () => setScreen('leaderboard') : undefined}
               onShowReview={mode === 'teacher' ? () => setScreen('review') : undefined}
@@ -116,22 +92,28 @@ export default function App() {
               <QuizCard
                 question={QUESTIONS[currentStage]}
                 stageNum={currentStage + 1}
-                onAnswer={(selected, isCorrect) => {
+                onAnswer={(selected, isCorrect, retryUsed) => {
                   const record = { 
                     questionId: QUESTIONS[currentStage].id, 
                     selectedAnswer: selected,
                     isCorrect 
                   };
                   setAnswers(prev => [...prev, record]);
-                  if (isCorrect) setScore(s => s + 1);
+                  
+                  // Scoring: 100 for first-try correct, 50 for second-try correct
+                  let points = 0;
+                  if (isCorrect) {
+                    points = retryUsed ? 50 : 100;
+                  }
+                  setScore(s => s + points);
                   
                   // Progress to next stage or finish
+                  const currentFinalScore = score + points;
                   setTimeout(() => {
                     if (currentStage < STAGES.length - 1) {
                       setCurrentStage(prev => prev + 1);
                     } else {
-                      const duration = (8 * 60) - timeLeft;
-                      saveToLeaderboard(duration, score + (isCorrect ? 1 : 0), [...answers, record]);
+                      saveToLeaderboard(0, currentFinalScore, [...answers, record]);
                       setScreen(mode === 'student' ? 'win' : 'login');
                     }
                   }, 1500);
@@ -154,7 +136,7 @@ export default function App() {
           <motion.div key="gameover" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <GameOver
               score={score}
-              totalQuestions={STAGES.length}
+              totalQuestions={STAGES.length * 100}
               onRestart={() => setScreen('login')}
               onLeaderboard={() => setScreen('leaderboard')}
               onReview={() => setScreen('review')}
@@ -167,8 +149,8 @@ export default function App() {
             <GameWin
               playerName={player.name}
               score={score}
-              totalQuestions={STAGES.length}
-              elapsedSeconds={elapsedSeconds}
+              totalQuestions={STAGES.length * 100}
+              elapsedSeconds={0}
               mode={mode}
               onRestart={() => setScreen('login')}
               onLeaderboard={() => setScreen('leaderboard')}

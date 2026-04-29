@@ -348,179 +348,96 @@ export default function Leaderboard({ onBack, currentPlayerName, onViewMyAttempt
                 )}
 
                 {/* ===== TEACHER VIEW ===== */}
-                {viewMode === 'teacher' && analytics && (
+                {viewMode === 'teacher' && (
                     <div className="space-y-4">
-                        {/* Class Snapshot */}
                         <div style={cardStyle}>
-                            <div style={headerStyle}>
-                                <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: '#DC2626' }}>
-                                    📊 Tổng Quan Lớp
-                                </span>
+                            <div
+                                className="flex items-center justify-between px-6 py-3.5 text-xs font-black uppercase tracking-widest"
+                                style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', color: '#DC2626', background: 'rgba(220,38,38,0.02)' }}
+                            >
+                                <span>Thứ Hạng & Học Sinh</span>
+                                <div className="flex gap-12">
+                                    <span className="w-20 text-center">Kết Quả</span>
+                                    <span className="w-20 text-center">Thời Gian</span>
+                                </div>
                             </div>
-                            <div className="p-5 grid grid-cols-2 md:grid-cols-4 gap-3">
-                                {[
-                                    { label: 'Số Đội', value: analytics.totalTeams, color: '#F5F5F5' },
-                                    { label: 'Hoàn Thành', value: `${analytics.completionRate}%`, color: '#10B981' },
-                                    { label: 'TB Chính Xác', value: `${analytics.avgAccuracy}%`, color: '#DC2626' },
-                                    { label: 'Nhanh Nhất (≥80%)', value: analytics.fastestTime !== null ? formatTime(analytics.fastestTime) : '—', color: '#F59E0B' },
-                                ].map(stat => (
-                                    <div
-                                        key={stat.label}
-                                        className="rounded-xl p-4 text-center"
-                                        style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}
-                                    >
-                                        <div className="text-[10px] uppercase font-bold tracking-wider mb-1.5" style={{ color: '#333' }}>
-                                            {stat.label}
-                                        </div>
-                                        <div className="text-2xl font-black font-mono" style={{ color: stat.color }}>
-                                            {stat.value}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
 
-                        {/* Question Insights */}
-                        <div style={cardStyle}>
-                            <div style={headerStyle}>
-                                <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: '#DC2626' }}>
-                                    📈 Phân Tích Câu Hỏi
-                                </span>
-                                {analytics.hardest.length > 0 && (
-                                    <span
-                                        className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                                        style={{ background: 'rgba(220,38,38,0.1)', color: '#F87171', border: '1px solid rgba(220,38,38,0.2)' }}
-                                    >
-                                        Khó nhất: {analytics.hardest.map(h => h.label).join(', ')}
-                                    </span>
-                                )}
-                            </div>
-                            <div className="p-5 space-y-2.5">
-                                {analytics.questionRates.map((q) => (
-                                    <div key={q.id} className="flex items-center gap-3">
-                                        <span className="text-xs font-bold w-8 shrink-0" style={{ color: '#444' }}>{q.label}</span>
-                                        <div className="flex-1 h-5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)' }}>
+                            <div className="max-h-[60vh] overflow-y-auto no-scrollbar">
+                                {data.length > 0 ? (
+                                    data.map((entry, index) => {
+                                        const rc = rankColor(index);
+                                        return (
                                             <motion.div
-                                                initial={{ width: 0 }}
-                                                animate={{ width: `${q.rate}%` }}
-                                                transition={{ duration: 0.8, delay: 0.1 }}
-                                                className="h-full rounded-full flex items-center justify-end pr-2"
-                                                style={{
-                                                    background: q.rate >= 80 ? '#10B981' : q.rate >= 50 ? '#F59E0B' : '#DC2626',
-                                                    boxShadow: q.rate >= 80
-                                                        ? '0 0 8px rgba(16,185,129,0.4)'
-                                                        : q.rate >= 50
-                                                            ? '0 0 8px rgba(245,158,11,0.4)'
-                                                            : '0 0 8px rgba(220,38,38,0.3)',
-                                                }}
+                                                key={entry.id || index}
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                className="flex items-center justify-between px-6 py-5"
+                                                style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}
                                             >
-                                                {q.rate > 15 && (
-                                                    <span className="text-[10px] font-bold text-white">{q.rate}%</span>
-                                                )}
+                                                <div className="flex items-center gap-5">
+                                                    <div
+                                                        className="w-12 h-12 rounded-full flex items-center justify-center font-black text-xl shrink-0"
+                                                        style={{ background: rc.bg, border: `1px solid ${rc.border}`, color: rc.text }}
+                                                    >
+                                                        {index + 1}
+                                                    </div>
+                                                    <div>
+                                                        <div className="font-black text-xl md:text-2xl" style={{ color: '#F5F5F5' }}>
+                                                            {entry.name}
+                                                        </div>
+                                                        <div className="text-sm font-bold uppercase tracking-widest mt-0.5" style={{ color: '#555' }}>
+                                                            {entry.class}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex items-center gap-10">
+                                                    <div className="w-20 text-center">
+                                                        <span className="font-black text-2xl md:text-3xl" style={{ color: '#DC2626' }}>
+                                                            {entry.score ?? '–'}
+                                                        </span>
+                                                        <span className="text-xs font-bold" style={{ color: '#333' }}>
+                                                            /1000
+                                                        </span>
+                                                    </div>
+                                                    <div className="w-20 text-center font-mono font-black text-xl md:text-2xl" style={{ color: '#888' }}>
+                                                        {formatTime(entry.time)}
+                                                    </div>
+                                                </div>
                                             </motion.div>
-                                        </div>
-                                        {q.rate <= 15 && (
-                                            <span className="text-[10px] font-bold w-8" style={{ color: '#444' }}>{q.rate}%</span>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Skills Breakdown */}
-                        <div style={cardStyle}>
-                            <div style={headerStyle}>
-                                <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: '#DC2626' }}>
-                                    🧠 Phân Tích Kỹ Năng
-                                </span>
-                            </div>
-                            <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-3">
-                                {skillsBreakdown.map((skill) => (
-                                    <div
-                                        key={skill.name}
-                                        className="rounded-xl p-4"
-                                        style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}
-                                    >
-                                        <div className="flex items-center justify-between mb-2.5">
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-base">{skill.icon}</span>
-                                                <span className="text-xs font-bold" style={{ color: '#B0B0B0' }}>{skill.name}</span>
-                                            </div>
-                                            <span className="text-sm font-black" style={{ color: skill.color }}>{skill.rate}%</span>
-                                        </div>
-                                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
-                                            <motion.div
-                                                initial={{ width: 0 }}
-                                                animate={{ width: `${skill.rate}%` }}
-                                                transition={{ duration: 0.8 }}
-                                                className="h-full rounded-full"
-                                                style={{ backgroundColor: skill.color, boxShadow: `0 0 8px ${skill.color}60` }}
-                                            />
-                                        </div>
-                                        <div className="text-[10px] mt-1.5" style={{ color: '#333' }}>
-                                            {skill.correct}/{skill.total} đúng
-                                            <span className="ml-2" style={{ color: '#222' }}>
-                                                · Q{skill.questions.map(q => q.replace('q', '')).join(', ')}
-                                            </span>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Footer buttons */}
-                        <div className="flex flex-col items-center gap-3 pb-4">
-                            <div className="flex gap-3 flex-wrap justify-center">
-                                <button
-                                    onClick={onBack}
-                                    className="px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all"
-                                    style={{
-                                        background: 'rgba(255,255,255,0.03)',
-                                        border: '1px solid rgba(255,255,255,0.06)',
-                                        color: '#555',
-                                    }}
-                                    onMouseEnter={e => { e.currentTarget.style.color = '#888'; }}
-                                    onMouseLeave={e => { e.currentTarget.style.color = '#555'; }}
-                                >
-                                    ← Quay Lại
-                                </button>
-                                {!resetConfirm ? (
-                                    <button
-                                        onClick={() => setResetConfirm(true)}
-                                        className="px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all"
-                                        style={{
-                                            background: 'rgba(220,38,38,0.08)',
-                                            border: '1px solid rgba(220,38,38,0.25)',
-                                            color: '#F87171',
-                                        }}
-                                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.15)'; }}
-                                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.08)'; }}
-                                    >
-                                        🗑 Xóa Dữ Liệu
-                                    </button>
+                                        );
+                                    })
                                 ) : (
-                                    <div
-                                        className="flex items-center gap-2 rounded-xl px-4 py-2"
-                                        style={{ background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.2)' }}
-                                    >
-                                        <span className="text-xs font-bold" style={{ color: '#F87171' }}>Bạn chắc chắn?</span>
-                                        <button
-                                            onClick={handleReset}
-                                            className="px-3 py-1 rounded-lg text-xs font-bold text-white"
-                                            style={{ background: '#DC2626' }}
-                                        >
-                                            Xóa
-                                        </button>
-                                        <button
-                                            onClick={() => setResetConfirm(false)}
-                                            className="px-3 py-1 rounded-lg text-xs font-bold"
-                                            style={{ background: 'rgba(255,255,255,0.04)', color: '#555' }}
-                                        >
-                                            Hủy
-                                        </button>
+                                    <div className="text-center py-20 text-sm italic" style={{ color: '#333' }}>
+                                        Chưa có dữ liệu thi đấu.
                                     </div>
                                 )}
                             </div>
+                        </div>
+
+                        {/* Footer actions */}
+                        <div className="flex justify-center gap-4 py-4">
+                            <button
+                                onClick={onBack}
+                                className="px-8 py-3 rounded-xl font-black text-sm uppercase tracking-widest bg-white text-black hover:bg-slate-200 transition-all active:scale-95"
+                            >
+                                ← Quay Lại
+                            </button>
+                            {!resetConfirm ? (
+                                <button
+                                    onClick={() => setResetConfirm(true)}
+                                    className="px-8 py-3 rounded-xl font-black text-sm uppercase tracking-widest transition-all"
+                                    style={{ background: 'rgba(220,38,38,0.1)', border: '1px solid rgba(220,38,38,0.2)', color: '#F87171' }}
+                                >
+                                    🗑 Xóa Tất Cả
+                                </button>
+                            ) : (
+                                <div className="flex items-center gap-3 bg-red-950/20 border border-red-900/40 p-2 rounded-xl px-5">
+                                    <span className="text-xs font-bold text-red-400">Xóa vĩnh viễn?</span>
+                                    <button onClick={handleReset} className="px-4 py-2 bg-red-600 text-white font-bold rounded-lg text-xs">Xác Nhận</button>
+                                    <button onClick={() => setResetConfirm(false)} className="px-4 py-2 bg-slate-800 text-white font-bold rounded-lg text-xs">Hủy</button>
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}

@@ -5,20 +5,12 @@ import { STAGES } from '../utils/gameData';
 
 interface GameHeaderProps {
     currentStage: number;
-    timeLeft: number;
     mode: 'student' | 'teacher';
     onShowLeaderboard?: () => void;
     onShowReview?: () => void;
 }
 
-export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderboard, onShowReview }: GameHeaderProps) {
-    const formatTime = (seconds: number) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    };
-
-    const isWarning = timeLeft <= 60;
+export default function GameHeader({ currentStage, mode, onShowLeaderboard, onShowReview }: GameHeaderProps) {
     const [isFullscreen, setIsFullscreen] = useState(false);
 
     const toggleFullscreen = useCallback(() => {
@@ -34,6 +26,7 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
         document.addEventListener('fullscreenchange', onFsChange);
         return () => document.removeEventListener('fullscreenchange', onFsChange);
     }, []);
+
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -53,210 +46,124 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
 
     return (
         <div
-            className="w-full text-white px-4 py-3 md:px-6 md:py-4 flex flex-col gap-3"
+            className="w-full text-white px-4 py-2 md:px-6 md:py-3 flex flex-col gap-2"
             style={{
                 background: 'linear-gradient(180deg, #000000 0%, #0A0A0A 100%)',
                 borderBottom: '1px solid rgba(220,38,38,0.08)',
                 boxShadow: '0 4px 32px rgba(0,0,0,0.8)',
+                position: 'relative',
+                zIndex: 50
             }}
         >
-            {/* Top Row */}
+            {/* Top Row: Branding and Actions */}
             <div className="flex justify-between items-center">
                 {/* Left: Branding */}
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2">
                     <div
-                        className="w-9 h-9 rounded-xl flex items-center justify-center text-xl shrink-0"
+                        className="w-8 h-8 md:w-9 md:h-9 rounded-lg md:rounded-xl flex items-center justify-center text-lg md:text-xl shrink-0"
                         style={{
                             background: 'rgba(220,38,38,0.08)',
                             border: '1px solid rgba(220,38,38,0.2)',
-                            boxShadow: '0 0 12px rgba(220,38,38,0.2)',
                         }}
                     >
                         ⚔️
                     </div>
                     <div>
-                        <h1 className="text-sm md:text-xl font-black uppercase tracking-tight leading-tight font-orbitron">
+                        <h1 className="text-sm md:text-lg font-black uppercase tracking-tight leading-tight font-orbitron">
                             <span style={{ color: '#DC2626' }}>ĐẤU TRƯỜNG</span>
                             <span className="text-[#888]"> BẢN LĨNH</span>
                         </h1>
-                        <p className="text-xs md:text-sm text-[#555] uppercase tracking-widest font-bold">
-                            Chặng {String(currentStage + 1).padStart(2, '0')}: {STAGES[currentStage]?.name || ''}
+                        <p className="text-[10px] md:text-xs text-[#555] uppercase tracking-widest font-bold">
+                            Chặng {currentStage + 1}: {STAGES[currentStage]?.name || ''}
                         </p>
                     </div>
                 </div>
 
-                {/* Right: Timer or Teacher badge */}
+                {/* Right: Actions */}
                 <div className="flex items-center gap-2">
                     {mode === 'student' ? (
-                        <motion.div
-                            animate={isWarning ? { scale: [1, 1.04, 1] } : {}}
-                            transition={{ duration: 0.8, repeat: Infinity }}
-                            className="flex items-center gap-2 px-3 py-1.5 rounded-full"
+                        <div
+                            className="px-2.5 py-1 rounded-full"
                             style={{
-                                background: isWarning ? 'rgba(220,38,38,0.1)' : 'rgba(255,255,255,0.04)',
-                                border: isWarning ? '1px solid rgba(220,38,38,0.3)' : '1px solid rgba(255,255,255,0.08)',
-                                boxShadow: isWarning ? '0 0 12px rgba(220,38,38,0.2)' : 'none',
+                                background: 'rgba(220,38,38,0.1)',
+                                border: '1px solid rgba(220,38,38,0.2)',
                             }}
                         >
-                            <span className="text-base" style={{ color: isWarning ? '#F87171' : '#DC2626' }}>⏱</span>
-                            <span
-                                className="font-mono text-xl md:text-3xl font-bold tracking-wider"
-                                style={{ color: isWarning ? '#F87171' : '#F5F5F5' }}
-                            >
-                                {formatTime(timeLeft)}
+                            <span className="text-[10px] md:text-xs font-bold text-[#F87171] uppercase tracking-wider">
+                                Đang Thi Đấu
                             </span>
-                        </motion.div>
+                        </div>
                     ) : (
-                        <div className="flex items-center gap-1.5">
-                            <div
-                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full teacher-badge"
-                                style={{
-                                    background: 'rgba(16,185,129,0.08)',
-                                    border: '1px solid rgba(16,185,129,0.25)',
-                                }}
-                            >
-                                <span className="text-sm md:text-base">🟢</span>
-                                <span className="text-xs md:text-sm font-bold text-[#6EE7B7] uppercase tracking-wider whitespace-nowrap">
-                                    Chế Độ Giáo Viên
-                                </span>
-                            </div>
-                            {/* Teacher quick actions */}
-                            <div className="hidden md:flex items-center gap-1.5">
-                                {onShowReview && (
-                                    <button
-                                        onClick={onShowReview}
-                                        className="px-3 py-1.5 text-xs font-bold rounded-lg uppercase tracking-wider transition-all duration-150"
-                                        style={{
-                                            background: 'rgba(255,255,255,0.03)',
-                                            border: '1px solid rgba(255,255,255,0.06)',
-                                            color: '#555',
-                                        }}
-                                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.1)'; e.currentTarget.style.borderColor = 'rgba(220,38,38,0.3)'; e.currentTarget.style.color = '#F87171'; }}
-                                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = '#555'; }}
-                                    >
-                                        Xem Lại
-                                    </button>
-                                )}
-                                {onShowLeaderboard && (
-                                    <button
-                                        onClick={onShowLeaderboard}
-                                        className="px-3 py-1.5 text-xs font-bold rounded-lg uppercase tracking-wider transition-all duration-150"
-                                        style={{
-                                            background: 'rgba(255,255,255,0.03)',
-                                            border: '1px solid rgba(255,255,255,0.06)',
-                                            color: '#555',
-                                        }}
-                                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.1)'; e.currentTarget.style.borderColor = 'rgba(220,38,38,0.3)'; e.currentTarget.style.color = '#F87171'; }}
-                                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = '#555'; }}
-                                    >
-                                        Bảng Xếp Hạng
-                                    </button>
-                                )}
-                                {/* Fullscreen button – desktop Teacher View only */}
+                        <div className="flex items-center gap-2">
+                            {onShowLeaderboard && (
                                 <button
-                                    onClick={toggleFullscreen}
-                                    title={isFullscreen ? 'Thoát Toàn Màn Hình' : 'Toàn Màn Hình'}
-                                    className="px-3 py-1.5 text-xs font-bold rounded-lg uppercase tracking-wider transition-all duration-150 flex items-center gap-1.5"
-                                    style={{
-                                        background: isFullscreen ? 'rgba(220,38,38,0.10)' : 'rgba(255,255,255,0.03)',
-                                        border: isFullscreen ? '1px solid rgba(220,38,38,0.35)' : '1px solid rgba(255,255,255,0.06)',
-                                        color: isFullscreen ? '#DC2626' : '#555',
-                                    }}
-                                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.12)'; e.currentTarget.style.borderColor = 'rgba(220,38,38,0.4)'; e.currentTarget.style.color = '#DC2626'; }}
-                                    onMouseLeave={e => {
-                                        e.currentTarget.style.background = isFullscreen ? 'rgba(220,38,38,0.10)' : 'rgba(255,255,255,0.03)';
-                                        e.currentTarget.style.borderColor = isFullscreen ? 'rgba(220,38,38,0.35)' : 'rgba(255,255,255,0.06)';
-                                        e.currentTarget.style.color = isFullscreen ? '#DC2626' : '#555';
-                                    }}
+                                    onClick={onShowLeaderboard}
+                                    className="px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold bg-white text-black hover:bg-slate-200 transition-all uppercase tracking-widest shadow-lg active:scale-95"
                                 >
-                                    {isFullscreen ? (
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                            <path d="M8 3v3a2 2 0 0 1-2 2H3" /><path d="M21 8h-3a2 2 0 0 1-2-2V3" />
-                                            <path d="M3 16h3a2 2 0 0 1 2 2v3" /><path d="M16 21v-3a2 2 0 0 1 2-2h3" />
-                                        </svg>
-                                    ) : (
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                            <path d="M3 7V5a2 2 0 0 1 2-2h2" /><path d="M17 3h2a2 2 0 0 1 2 2v2" />
-                                            <path d="M21 17v2a2 2 0 0 1-2 2h-2" /><path d="M7 21H5a2 2 0 0 1-2-2v-2" />
-                                        </svg>
-                                    )}
-                                    {isFullscreen ? 'Thu Nhỏ' : 'Phóng To'}
+                                    📊 Bảng Xếp Hạng
                                 </button>
-                            </div>
+                            )}
+                            <button
+                                onClick={toggleFullscreen}
+                                className="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-lg bg-slate-800 text-white border border-white/10"
+                            >
+                                {isFullscreen ? '↙️' : '↗️'}
+                            </button>
                         </div>
                     )}
                 </div>
             </div>
 
-            {/* Stage Progress Bar */}
-            <div className="relative w-full max-w-4xl mx-auto overflow-hidden">
-                {/* Background line */}
-                <div
-                    className="absolute top-1/2 left-0 w-full h-px -translate-y-1/2"
-                    style={{ background: 'rgba(255,255,255,0.04)' }}
-                />
-                {/* Progress line */}
-                <motion.div
-                    className="absolute top-1/2 left-0 h-px -translate-y-1/2"
-                    style={{
-                        background: 'linear-gradient(90deg, #991B1B, #DC2626, #EF4444)',
-                        boxShadow: '0 0 8px rgba(220,38,38,0.5)',
-                    }}
-                    initial={{ width: '0%' }}
-                    animate={{ width: `${(currentStage / (STAGES.length - 1)) * 100}%` }}
-                    transition={{ duration: 0.5 }}
-                />
-
-                {/* Stage Icons */}
-                <div
+            {/* Middle Row: Progress Bar (Smaller on mobile) */}
+            <div className="relative py-1">
+                <div 
                     ref={containerRef}
-                    className="relative flex justify-between items-center w-full overflow-x-auto no-scrollbar py-2 px-1"
+                    className="flex items-center gap-2 md:gap-4 overflow-x-auto no-scrollbar pb-1 mask-fade-edges"
                 >
-                    {STAGES.map((stage, index) => {
-                        const isActive = index === currentStage;
-                        const isCompleted = index < currentStage;
-
+                    {STAGES.map((stage, idx) => {
+                        const isActive = idx === currentStage;
+                        const isPast = idx < currentStage;
                         return (
-                            <motion.div
-                                key={stage.id}
-                                className="flex-shrink-0 flex flex-col items-center justify-center relative z-10 mx-1 md:mx-0 group"
-                                animate={{ scale: isActive ? 1.15 : 1 }}
-                                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                                title={`Chặng ${String(index + 1).padStart(2, '0')}: ${stage.name}`}
-                            >
-                                {isActive && (
-                                    <span
-                                        className="absolute inset-0 rounded-full border border-[#DC2626]/50"
-                                        style={{
-                                            animation: 'pulseRing 2s ease-out infinite',
-                                            transform: 'scale(1.5)',
-                                        }}
-                                    />
-                                )}
+                            <div key={stage.id} className="flex items-center flex-shrink-0">
                                 <div
-                                    className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-base md:text-xl border-2 transition-all duration-300 relative"
+                                    className={`
+                                        w-8 h-8 md:w-11 md:h-11 rounded-full flex items-center justify-center 
+                                        text-base md:text-xl border-2 transition-all duration-500 relative
+                                    `}
                                     style={{
-                                        ...(isActive ? {
-                                            background: 'rgba(220,38,38,0.2)',
-                                            borderColor: '#DC2626',
-                                            boxShadow: '0 0 12px rgba(220,38,38,0.8), 0 0 24px rgba(220,38,38,0.4)',
-                                        } : isCompleted ? {
-                                            background: 'rgba(16,185,129,0.1)',
-                                            borderColor: 'rgba(16,185,129,0.4)',
-                                            opacity: 0.9,
-                                        } : {
-                                            background: 'rgba(255,255,255,0.02)',
-                                            borderColor: 'rgba(255,255,255,0.05)',
-                                            opacity: 0.4,
-                                        })
+                                        borderColor: isActive ? '#DC2626' : (isPast ? '#991B1B' : '#222'),
+                                        background: isActive ? 'rgba(220,38,38,0.2)' : 'rgba(0,0,0,0.3)',
+                                        boxShadow: isActive ? '0 0 15px rgba(220,38,38,0.4)' : 'none',
+                                        zIndex: isActive ? 10 : 1
                                     }}
                                 >
-                                    {isCompleted ? '✓' : stage.icon}
+                                    {stage.icon}
+                                    {isActive && (
+                                        <motion.div 
+                                            layoutId="header-active-glow"
+                                            className="absolute inset-[-4px] rounded-full border border-[#DC2626]/30"
+                                            animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.1, 0.3] }}
+                                            transition={{ duration: 2, repeat: Infinity }}
+                                        />
+                                    )}
                                 </div>
-                            </motion.div>
+                                {idx < STAGES.length - 1 && (
+                                    <div 
+                                        className="w-4 md:w-8 h-[2px] mx-1 md:mx-0"
+                                        style={{ background: isPast ? '#991B1B' : '#222' }}
+                                    />
+                                )}
+                            </div>
                         );
                     })}
                 </div>
+            </div>
+
+            {/* Bottom Row: Design Credits (Smallest) */}
+            <div className="flex justify-center border-t border-white/5 pt-1">
+                <p className="text-[8px] md:text-[10px] font-bold uppercase tracking-[0.15em] text-[#444] text-center">
+                    Nhóm thiết kế: <span className="text-[#666]">NGUYỄN NGỌC BẢO- VÕ THỊ THU HÀ- NGUYỄN THỊ THU HIỀN</span>
+                </p>
             </div>
         </div>
     );

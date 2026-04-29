@@ -81,14 +81,17 @@ export default function GameWin({ playerName, score, totalQuestions, elapsedSeco
                     </motion.div>
 
                     {/* Title */}
-                    <div className="text-center mb-1">
+                    <div className="text-center mb-1 px-2">
                         <h1
-                            className="text-2xl font-black uppercase tracking-tight font-orbitron"
+                            className="text-xl md:text-2xl font-black uppercase tracking-tight font-orbitron"
                             style={{ color: '#F5F5F5' }}
                         >
-                            Hoàn Thành!
+                            CHÚC MỪNG CHIẾN BINH ALPHA!
                         </h1>
-                        <p className="text-sm mt-1" style={{ color: '#555' }}>
+                        <p className="text-sm mt-3 font-medium leading-relaxed" style={{ color: '#F87171' }}>
+                            "Bạn đã phá đảo ma trận độc tố, quét sạch làn khói ảo và làm chủ tương lai chính mình."
+                        </p>
+                        <p className="text-[11px] mt-4" style={{ color: '#444' }}>
                             Tuyệt vời, <span style={{ color: '#B0B0B0' }}>{playerName}</span>!
                         </p>
                     </div>
