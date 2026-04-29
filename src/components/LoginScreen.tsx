@@ -54,7 +54,7 @@ export default function LoginScreen({ onStart, onTeacherStart }: LoginScreenProp
         initial={{ opacity: 0, y: 30, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full max-w-lg"
+        className="w-full max-w-xl"
       >
         {/* Title Section - "ĐẤU TRƯỜNG BẢN LĨNH" Style */}
         <div className="text-center mb-8 relative">
@@ -63,10 +63,14 @@ export default function LoginScreen({ onStart, onTeacherStart }: LoginScreenProp
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-xs font-bold uppercase tracking-[0.35em] mb-3"
-            style={{ color: '#DC2626', textShadow: '0 0 20px rgba(220,38,38,0.5)' }}
+            className="text-base md:text-lg font-black uppercase tracking-[0.2em] mb-4"
+            style={{ 
+              color: '#DC2626', 
+              textShadow: '0 0 20px rgba(220,38,38,0.5)',
+              WebkitTextStroke: '1px rgba(220,38,38,0.3)'
+            }}
           >
-            SYSTEM ONLINE
+            VÌ MỘT MÔI TRƯỜNG KHÔNG KHÓI THUỐC
           </motion.p>
 
           {/* Main Title */}
@@ -76,12 +80,12 @@ export default function LoginScreen({ onStart, onTeacherStart }: LoginScreenProp
             transition={{ delay: 0.1, duration: 0.6 }}
             className="font-orbitron text-flicker"
             style={{
-              fontSize: 'clamp(2.5rem, 7vw, 4rem)',
+              fontSize: 'clamp(2rem, 6vw, 3.5rem)',
               fontWeight: 900,
               lineHeight: 1,
               color: '#F5F5F5',
               textShadow: '0 0 30px rgba(220,38,38,0.3), 0 2px 4px rgba(0,0,0,0.8)',
-              letterSpacing: '0.02em',
+              letterSpacing: '0.05em',
             }}
           >
             ĐẤU TRƯỜNG
@@ -92,7 +96,7 @@ export default function LoginScreen({ onStart, onTeacherStart }: LoginScreenProp
             transition={{ delay: 0.2, duration: 0.6 }}
             className="font-orbitron"
             style={{
-              fontSize: 'clamp(2.5rem, 7vw, 4rem)',
+              fontSize: 'clamp(2.5rem, 7vw, 4.5rem)',
               fontWeight: 900,
               lineHeight: 1.1,
               background: 'linear-gradient(180deg, #DC2626 0%, #EF4444 50%, #F87171 100%)',
@@ -110,29 +114,20 @@ export default function LoginScreen({ onStart, onTeacherStart }: LoginScreenProp
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="font-orbitron mt-4 text-sm md:text-base uppercase tracking-wider"
+            className="font-orbitron mt-5 text-xl md:text-2xl uppercase tracking-wider font-bold"
             style={{
-              color: '#B0B0B0',
-              textShadow: '0 0 10px rgba(220,38,38,0.2)',
+              color: '#FFFFFF',
+              textShadow: '0 0 15px rgba(255,255,255,0.3)',
             }}
           >
             SẴN SÀNG QUÉT SẠCH LÀN KHÓI ẢO?
           </motion.p>
 
-          {/* Small instruction */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.7 }}
-            className="mt-3 text-xs tracking-wide"
-            style={{ color: '#555' }}
-          >
-            Sử dụng KIẾN THỨC & KỸ NĂNG để phá đảo thử thách
-          </motion.p>
+          {/* Instruction subtext removed as requested */}
         </div>
 
         {/* Glass Card */}
-        <div className="glass-card p-8 relative overflow-hidden">
+        <div className="glass-card p-8 md:p-10 relative overflow-hidden">
           {/* Top accent bar - RED */}
           <div
             className="absolute top-0 left-0 right-0 h-[2px]"
@@ -147,16 +142,15 @@ export default function LoginScreen({ onStart, onTeacherStart }: LoginScreenProp
           />
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Full Name */}
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-[10px] font-bold text-[#666] uppercase tracking-[0.15em] mb-2">
+              <label className="block text-xs font-bold text-[#666] uppercase tracking-[0.15em] mb-2">
                 Họ và Tên
               </label>
               <div className="relative">
                 <span
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-base transition-colors duration-200"
-                  style={{ color: nameFocused ? '#DC2626' : '#444' }}
+                  style={{ color: nameFocused ? '#DC2626' : '#666' }}
                 >
                   👤
                 </span>
@@ -166,11 +160,11 @@ export default function LoginScreen({ onStart, onTeacherStart }: LoginScreenProp
                   onChange={(e) => setName(e.target.value)}
                   onFocus={() => setNameFocused(true)}
                   onBlur={() => setNameFocused(false)}
-                  className="w-full pl-11 pr-4 py-3.5 rounded-xl text-[#F5F5F5] placeholder-[#333] text-sm font-medium outline-none transition-all duration-200"
+                  className="w-full pl-12 pr-4 py-5 rounded-xl text-[#F5F5F5] placeholder-[#555] text-xl font-bold outline-none transition-all duration-200"
                   style={{
-                    background: 'rgba(255,255,255,0.04)',
-                    border: nameFocused ? '1.5px solid #DC2626' : '1.5px solid rgba(255,255,255,0.06)',
-                    boxShadow: nameFocused ? '0 0 0 3px rgba(220,38,38,0.12), 0 0 16px rgba(220,38,38,0.08)' : 'none',
+                    background: 'rgba(255,255,255,0.06)',
+                    border: nameFocused ? '2px solid #DC2626' : '1.5px solid rgba(255,255,255,0.2)',
+                    boxShadow: nameFocused ? '0 0 0 4px rgba(220,38,38,0.2), 0 0 20px rgba(220,38,38,0.1)' : 'none',
                   }}
                   placeholder="Nhập họ và tên"
                 />
@@ -195,11 +189,11 @@ export default function LoginScreen({ onStart, onTeacherStart }: LoginScreenProp
                   onChange={(e) => setClassName(e.target.value)}
                   onFocus={() => setClassFocused(true)}
                   onBlur={() => setClassFocused(false)}
-                  className="w-full pl-11 pr-4 py-3.5 rounded-xl text-[#F5F5F5] placeholder-[#333] text-sm font-medium outline-none transition-all duration-200"
+                  className="w-full pl-12 pr-4 py-5 rounded-xl text-[#F5F5F5] placeholder-[#555] text-xl font-bold outline-none transition-all duration-200"
                   style={{
-                    background: 'rgba(255,255,255,0.04)',
-                    border: classFocused ? '1.5px solid #DC2626' : '1.5px solid rgba(255,255,255,0.06)',
-                    boxShadow: classFocused ? '0 0 0 3px rgba(220,38,38,0.12), 0 0 16px rgba(220,38,38,0.08)' : 'none',
+                    background: 'rgba(255,255,255,0.06)',
+                    border: classFocused ? '2px solid #DC2626' : '1.5px solid rgba(255,255,255,0.2)',
+                    boxShadow: classFocused ? '0 0 0 4px rgba(220,38,38,0.2), 0 0 20px rgba(220,38,38,0.1)' : 'none',
                   }}
                   placeholder="VD: 12A1"
                 />
@@ -221,7 +215,7 @@ export default function LoginScreen({ onStart, onTeacherStart }: LoginScreenProp
               whileHover={{ scale: 1.03, y: -2 }}
               whileTap={{ scale: 0.97 }}
               type="submit"
-              className="w-full py-4 text-white font-black rounded-2xl text-base uppercase tracking-[0.12em] flex items-center justify-center gap-3 transition-all duration-300 relative overflow-hidden"
+              className="w-full py-5 text-white font-black rounded-2xl text-lg md:text-xl uppercase tracking-[0.12em] flex items-center justify-center gap-3 transition-all duration-300 relative overflow-hidden"
               style={{
                 background: 'linear-gradient(135deg, #991B1B 0%, #DC2626 50%, #EF4444 100%)',
                 boxShadow: '0 4px 24px rgba(220,38,38,0.5), 0 0 40px rgba(220,38,38,0.15)',
@@ -239,7 +233,7 @@ export default function LoginScreen({ onStart, onTeacherStart }: LoginScreenProp
                 className="absolute inset-0 opacity-20"
                 style={{ background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.5) 50%, transparent 60%)', backgroundSize: '200% 100%' }}
               />
-              <span className="relative flex items-center gap-2 font-orbitron text-sm md:text-base">
+              <span className="relative flex items-center gap-2 font-orbitron text-base md:text-lg">
                 KÍCH HOẠT TRÒ CHƠI
               </span>
             </motion.button>
@@ -253,18 +247,18 @@ export default function LoginScreen({ onStart, onTeacherStart }: LoginScreenProp
                 setPinError('');
                 setPin('');
               }}
-              className="w-full py-3 rounded-xl text-[#444] text-sm font-semibold tracking-wide flex items-center justify-center gap-2 transition-all duration-200 hover:text-[#888]"
+              className="w-full py-4 rounded-xl text-red-500 text-lg md:text-xl font-bold tracking-[0.1em] flex items-center justify-center gap-3 transition-all duration-200 hover:text-red-400 font-orbitron"
               style={{
-                background: 'rgba(255,255,255,0.02)',
-                border: '1px solid rgba(255,255,255,0.05)',
+                background: 'rgba(220,38,38,0.05)',
+                border: '1.5px solid rgba(220,38,38,0.3)',
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.1)'; e.currentTarget.style.borderColor = 'rgba(220,38,38,0.5)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.05)'; e.currentTarget.style.borderColor = 'rgba(220,38,38,0.3)'; }}
             >
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
-              Giáo Viên
+              GIÁO VIÊN
             </button>
           </div>
 

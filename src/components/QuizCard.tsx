@@ -63,7 +63,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
             if (remaining.length > 0) parts.push({ text: remaining, highlighted: false });
             if (parts.length > 0) {
                 return (
-                    <p className="text-sm leading-relaxed whitespace-pre-line" style={{ color: '#F8FAFC', lineHeight: '1.85', fontSize: 'clamp(14px, 1.9vw, 22px)' }}>
+                    <p className="text-base leading-relaxed whitespace-pre-line" style={{ color: '#F5F5F5', lineHeight: '1.85', fontSize: 'clamp(16px, 2.1vw, 24px)' }}>
                         {parts.map((part, i) => (
                             <span
                                 key={i}
@@ -83,7 +83,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
             }
         }
         return (
-            <p className="text-sm leading-relaxed whitespace-pre-line" style={{ color: '#F8FAFC', lineHeight: '1.85', fontSize: 'clamp(14px, 1.9vw, 22px)' }}>
+            <p className="text-sm leading-relaxed whitespace-pre-line" style={{ color: '#F5F5F5', lineHeight: '1.85', fontSize: 'clamp(14px, 1.9vw, 22px)' }}>
                 {READING_PASSAGE}
             </p>
         );
@@ -110,7 +110,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
         if (mode === 'teacher' && revealed && option === question.answer) {
             return {
                 ...base,
-                background: 'rgba(16,185,129,0.12)',
+                background: 'rgba(16,185,129,0.1)',
                 borderColor: '#10B981',
                 color: '#6EE7B7',
                 boxShadow: '0 0 16px rgba(16,185,129,0.2)',
@@ -120,7 +120,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
         if (feedback === 'correct' && option === question.answer) {
             return {
                 ...base,
-                background: 'rgba(16,185,129,0.12)',
+                background: 'rgba(16,185,129,0.1)',
                 borderColor: '#10B981',
                 color: '#6EE7B7',
                 boxShadow: '0 0 16px rgba(16,185,129,0.25), 0 0 32px rgba(16,185,129,0.08)',
@@ -130,7 +130,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
         if (feedback === 'incorrect' && selected === option) {
             return {
                 ...base,
-                background: 'rgba(220,38,38,0.1)',
+                background: 'rgba(220,38,38,0.08)',
                 borderColor: '#DC2626',
                 color: '#FCA5A5',
                 boxShadow: '0 0 12px rgba(220,38,38,0.2)',
@@ -140,18 +140,18 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
         if (selected === option) {
             return {
                 ...base,
-                background: 'rgba(99,102,241,0.12)',
-                borderColor: '#6366F1',
-                color: '#F1F5F9',
-                boxShadow: '0 0 12px rgba(99,102,241,0.2), 0 0 0 1px rgba(99,102,241,0.2)',
+                background: 'rgba(220,38,38,0.08)',
+                borderColor: '#DC2626',
+                color: '#F5F5F5',
+                boxShadow: '0 0 12px rgba(220,38,38,0.2), 0 0 0 1px rgba(220,38,38,0.15)',
             };
         }
         // Normal
         return {
             ...base,
-            background: 'rgba(255,255,255,0.03)',
-            borderColor: 'rgba(255,255,255,0.08)',
-            color: '#E2E8F0',
+            background: 'rgba(255,255,255,0.02)',
+            borderColor: 'rgba(255,255,255,0.06)',
+            color: '#B0B0B0',
         };
     };
 
@@ -173,20 +173,20 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
             return { ...base, background: 'rgba(16,185,129,0.3)', color: '#6EE7B7' };
         }
         if (feedback === 'incorrect' && selected === option) {
-            return { ...base, background: 'rgba(220,38,38,0.3)', color: '#FCA5A5' };
+            return { ...base, background: 'rgba(220,38,38,0.25)', color: '#FCA5A5' };
         }
         if (selected === option) {
-            return { ...base, background: 'rgba(99,102,241,0.4)', color: '#C7D2FE' };
+            return { ...base, background: 'rgba(220,38,38,0.3)', color: '#FCA5A5' };
         }
-        return { ...base, background: 'rgba(255,255,255,0.06)', color: '#475569' };
+        return { ...base, background: 'rgba(255,255,255,0.04)', color: '#444' };
     };
 
     /* ---- Card surface style ---- */
     const cardStyle: React.CSSProperties = {
-        background: 'rgba(10,15,30,0.85)',
-        border: '1px solid rgba(255,255,255,0.08)',
+        background: 'rgba(10,10,10,0.9)',
+        border: '1px solid rgba(255,255,255,0.06)',
         borderRadius: '22px',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.7)',
         overflow: 'hidden',
         backdropFilter: 'blur(12px)',
         height: '100%',
@@ -196,7 +196,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
 
     const headerStyle: React.CSSProperties = {
         padding: '10px 20px',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        borderBottom: '1px solid rgba(255,255,255,0.04)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -206,9 +206,9 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
     const stageBadgeStyle: React.CSSProperties = {
         fontSize: '11px',
         fontWeight: 700,
-        color: '#A5B4FC',
-        background: 'rgba(99,102,241,0.15)',
-        border: '1px solid rgba(99,102,241,0.25)',
+        color: '#F87171',
+        background: 'rgba(220,38,38,0.1)',
+        border: '1px solid rgba(220,38,38,0.2)',
         borderRadius: '99px',
         padding: '3px 12px',
         letterSpacing: '0.1em',
@@ -229,15 +229,15 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                 style={{
                                     position: 'absolute',
                                     top: 0, left: 0, right: 0, height: '2px',
-                                    background: 'linear-gradient(90deg, #22D3EE, #6366F1)',
+                                    background: 'linear-gradient(90deg, #991B1B, #DC2626, #EF4444)',
                                 }}
                             />
                             <div className="flex items-center gap-2 relative">
-                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#22D3EE" strokeWidth={2}>
+                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth={2}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                                 </svg>
-                                <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: '#22D3EE' }}>
-                                    Reading Passage
+                                <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: '#DC2626' }}>
+                                    Bài Đọc
                                 </span>
                             </div>
                             {/* Highlight controls — available for all modes */}
@@ -246,36 +246,36 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                     onClick={handleHighlightToggle}
                                     className="flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold rounded-lg transition-all duration-200"
                                     style={highlightMode ? {
-                                        background: 'rgba(250,204,21,0.15)',
-                                        border: '1px solid rgba(250,204,21,0.45)',
+                                        background: 'rgba(250,204,21,0.12)',
+                                        border: '1px solid rgba(250,204,21,0.4)',
                                         color: '#FACC15',
-                                        boxShadow: '0 0 8px rgba(250,204,21,0.2)',
+                                        boxShadow: '0 0 8px rgba(250,204,21,0.15)',
                                     } : {
-                                        background: 'rgba(255,255,255,0.04)',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                        color: '#475569',
+                                        background: 'rgba(255,255,255,0.03)',
+                                        border: '1px solid rgba(255,255,255,0.06)',
+                                        color: '#444',
                                     }}
-                                    title={highlightMode ? 'Click to turn off highlight mode' : 'Click then select text to highlight'}
+                                    title={highlightMode ? 'Nhấn để tắt chế độ đánh dấu' : 'Nhấn rồi chọn text để đánh dấu'}
                                 >
                                     <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M9.5 21H5l1.5-4.5L18 5l3 3L9.5 21zm0 0" />
                                     </svg>
-                                    {highlightMode ? 'On' : 'Mark'}
+                                    {highlightMode ? 'Bật' : 'Đánh Dấu'}
                                 </button>
                                 {highlights.length > 0 && (
                                     <button
                                         onClick={handleClearHighlights}
                                         className="px-2.5 py-1 text-[10px] font-bold rounded-lg transition-all duration-200"
                                         style={{
-                                            background: 'rgba(255,255,255,0.04)',
-                                            border: '1px solid rgba(255,255,255,0.1)',
-                                            color: '#475569',
+                                            background: 'rgba(255,255,255,0.03)',
+                                            border: '1px solid rgba(255,255,255,0.06)',
+                                            color: '#444',
                                         }}
-                                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.1)'; e.currentTarget.style.color = '#F87171'; e.currentTarget.style.borderColor = 'rgba(220,38,38,0.3)'; }}
-                                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = '#475569'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
-                                        title="Clear all highlights"
+                                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.08)'; e.currentTarget.style.color = '#F87171'; e.currentTarget.style.borderColor = 'rgba(220,38,38,0.25)'; }}
+                                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.color = '#444'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'; }}
+                                        title="Xóa tất cả đánh dấu"
                                     >
-                                        Clear
+                                        Xóa
                                     </button>
                                 )}
                             </div>
@@ -289,7 +289,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                         >
                             <h3
                                 className="text-sm font-bold mb-3 uppercase tracking-wide"
-                                style={{ color: '#22D3EE' }}
+                                style={{ color: '#DC2626' }}
                             >
                                 AI All Around Us
                             </h3>
@@ -303,10 +303,10 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                     <div style={cardStyle}>
                         {/* Question Header */}
                         <div style={headerStyle}>
-                            <div style={stageBadgeStyle}>Stage {stageNum}</div>
+                            <div style={stageBadgeStyle}>Vòng {stageNum}</div>
                             <div className="flex items-center gap-2">
-                                <span className="text-[11px] font-medium" style={{ color: '#334155' }}>
-                                    {question.type === 'mcq' ? 'Multiple Choice' : "True / False / Doesn't Say"}
+                                <span className="text-[11px] font-medium" style={{ color: '#333' }}>
+                                    {question.type === 'mcq' ? 'Trắc Nghiệm' : "Đúng / Sai / Không Đề Cập"}
                                 </span>
 
                             </div>
@@ -314,7 +314,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
 
                         <div className="p-5 md:p-6 space-y-4 flex-1 flex flex-col">
                             {/* Question Text */}
-                            <h2 className="text-base font-bold leading-snug" style={{ color: '#F1F5F9', fontSize: 'clamp(15px, 2vw, 26px)' }}>
+                            <h2 className="text-lg font-bold leading-snug" style={{ color: '#F5F5F5', fontSize: 'clamp(18px, 2.3vw, 28px)' }}>
                                 {question.question}
                             </h2>
 
@@ -336,16 +336,16 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                         disabled={mode === 'student' && !!feedback}
                                         onMouseEnter={(e) => {
                                             if (!feedback && mode === 'student' && selected !== option) {
-                                                e.currentTarget.style.background = 'rgba(255,255,255,0.07)';
-                                                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)';
-                                                e.currentTarget.style.color = '#CBD5E1';
+                                                e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                                                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
+                                                e.currentTarget.style.color = '#B0B0B0';
                                             }
                                         }}
                                         onMouseLeave={(e) => {
                                             if (!feedback && mode === 'student' && selected !== option) {
-                                                e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
-                                                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
-                                                e.currentTarget.style.color = '#94A3B8';
+                                                e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
+                                                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
+                                                e.currentTarget.style.color = '#888';
                                             }
                                         }}
                                     >
@@ -370,12 +370,12 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                                 animate={{ scale: 1, opacity: 1 }}
                                                 className="text-center w-full"
                                             >
-                                                {/* AI Correct State */}
+                                                {/* Correct State */}
                                                 <div className="flex flex-col items-center mb-3">
                                                     <div
                                                         className="w-12 h-12 rounded-full flex items-center justify-center mb-2"
                                                         style={{
-                                                            background: 'rgba(16,185,129,0.15)',
+                                                            background: 'rgba(16,185,129,0.12)',
                                                             border: '1.5px solid #10B981',
                                                             boxShadow: '0 0 20px rgba(16,185,129,0.35)',
                                                         }}
@@ -388,10 +388,10 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                                         className="text-xl font-black tracking-wider uppercase"
                                                         style={{ color: '#10B981', textShadow: '0 0 20px rgba(16,185,129,0.5)' }}
                                                     >
-                                                        CORRECT!
+                                                        CHÍNH XÁC!
                                                     </span>
                                                     <span className="text-xs mt-0.5" style={{ color: '#34D399' }}>
-                                                        Well done — keep going!
+                                                        Tuyệt vời — tiếp tục nào!
                                                     </span>
                                                 </div>
                                                 <button
@@ -403,7 +403,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                                         fontSize: 'clamp(14px, 1.5vw, 19px)',
                                                     }}
                                                 >
-                                                    Continue →
+                                                    Tiếp Tục →
                                                 </button>
                                             </motion.div>
                                         ) : feedback === 'incorrect' ? (
@@ -417,7 +417,7 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                                     <div
                                                         className="w-12 h-12 rounded-full flex items-center justify-center mb-2"
                                                         style={{
-                                                            background: 'rgba(220,38,38,0.12)',
+                                                            background: 'rgba(220,38,38,0.1)',
                                                             border: '1.5px solid #DC2626',
                                                             boxShadow: '0 0 16px rgba(220,38,38,0.3)',
                                                         }}
@@ -431,25 +431,25 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                                         className="text-xl font-black tracking-wider uppercase"
                                                         style={{ color: '#EF4444' }}
                                                     >
-                                                        INCORRECT
+                                                        SAI RỒI
                                                     </span>
-                                                    <span className="text-xs mt-0.5" style={{ color: '#94A3B8' }}>
-                                                        Review the passage and try the next one.
+                                                    <span className="text-xs mt-0.5" style={{ color: '#888' }}>
+                                                        Xem lại bài đọc và thử câu tiếp theo.
                                                     </span>
                                                 </div>
                                                 <button
                                                     onClick={() => onAnswer(selected!, false)}
                                                     className="w-full py-3.5 font-bold rounded-xl text-white uppercase tracking-widest transition-all duration-200 hover:scale-[1.02]"
                                                     style={{
-                                                        background: 'rgba(255,255,255,0.06)',
-                                                        border: '1px solid rgba(255,255,255,0.12)',
+                                                        background: 'rgba(255,255,255,0.04)',
+                                                        border: '1px solid rgba(255,255,255,0.08)',
                                                         boxShadow: 'none',
                                                         fontSize: 'clamp(14px, 1.5vw, 19px)',
                                                     }}
-                                                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
-                                                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; }}
+                                                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.07)'; }}
+                                                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}
                                                 >
-                                                    ▶ Continue Challenge
+                                                    ▶ Tiếp Tục Thử Thách
                                                 </button>
                                             </motion.div>
                                         ) : (
@@ -461,30 +461,30 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                                 disabled={!selected}
                                                 className="w-full py-3.5 font-black uppercase tracking-widest rounded-xl transition-all duration-300"
                                                 style={selected ? {
-                                                    background: 'linear-gradient(135deg, #06B6D4 0%, #6366F1 55%, #8B5CF6 100%)',
-                                                    boxShadow: '0 4px 24px rgba(99,102,241,0.4)',
+                                                    background: 'linear-gradient(135deg, #991B1B 0%, #DC2626 55%, #EF4444 100%)',
+                                                    boxShadow: '0 4px 24px rgba(220,38,38,0.4)',
                                                     color: '#fff',
                                                     cursor: 'pointer',
                                                     fontSize: 'clamp(14px, 1.5vw, 19px)',
                                                 } : {
-                                                    background: 'rgba(255,255,255,0.04)',
-                                                    border: '1px solid rgba(255,255,255,0.06)',
-                                                    color: '#334155',
+                                                    background: 'rgba(255,255,255,0.03)',
+                                                    border: '1px solid rgba(255,255,255,0.04)',
+                                                    color: '#333',
                                                     cursor: 'not-allowed',
                                                     fontSize: 'clamp(14px, 1.5vw, 19px)',
                                                 }}
                                                 onMouseEnter={e => {
                                                     if (selected) {
-                                                        e.currentTarget.style.boxShadow = '0 6px 32px rgba(99,102,241,0.6), 0 0 20px rgba(34,211,238,0.2)';
+                                                        e.currentTarget.style.boxShadow = '0 6px 32px rgba(220,38,38,0.6), 0 0 20px rgba(239,68,68,0.2)';
                                                         e.currentTarget.style.transform = 'scale(1.02)';
                                                     }
                                                 }}
                                                 onMouseLeave={e => {
-                                                    e.currentTarget.style.boxShadow = selected ? '0 4px 24px rgba(99,102,241,0.4)' : 'none';
+                                                    e.currentTarget.style.boxShadow = selected ? '0 4px 24px rgba(220,38,38,0.4)' : 'none';
                                                     e.currentTarget.style.transform = 'scale(1)';
                                                 }}
                                             >
-                                                {selected ? '⚡ Check Answer' : 'Select an Answer'}
+                                                {selected ? '⚡ Kiểm Tra Đáp Án' : 'Chọn Một Đáp Án'}
                                             </motion.button>
                                         )}
                                     </AnimatePresence>
@@ -501,14 +501,14 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                                     fontSize: 'clamp(14px, 1.5vw, 19px)',
                                                 }}
                                             >
-                                                👁 Reveal
+                                                👁 Hiện Đáp Án
                                             </button>
                                         ) : (
                                             <div
                                                 className="flex-1 py-3 font-bold rounded-xl text-center text-sm uppercase tracking-widest"
                                                 style={{
-                                                    background: 'rgba(16,185,129,0.08)',
-                                                    border: '1px solid rgba(16,185,129,0.25)',
+                                                    background: 'rgba(16,185,129,0.06)',
+                                                    border: '1px solid rgba(16,185,129,0.2)',
                                                     color: '#6EE7B7',
                                                 }}
                                             >
@@ -519,14 +519,14 @@ export default function QuizCard({ question, stageNum, onAnswer, mode = 'student
                                             onClick={onNextQuestion}
                                             className="flex-1 py-3 font-bold rounded-xl text-white uppercase tracking-widest transition-all duration-200"
                                             style={{
-                                                background: 'rgba(255,255,255,0.05)',
-                                                border: '1px solid rgba(255,255,255,0.1)',
+                                                background: 'rgba(255,255,255,0.04)',
+                                                border: '1px solid rgba(255,255,255,0.08)',
                                                 fontSize: 'clamp(14px, 1.5vw, 19px)',
                                             }}
-                                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
-                                            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
+                                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.07)'; }}
+                                            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}
                                         >
-                                            Next →
+                                            Tiếp →
                                         </button>
                                     </div>
                                 )}

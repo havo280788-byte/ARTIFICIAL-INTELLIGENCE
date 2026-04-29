@@ -79,8 +79,8 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                             <span style={{ color: '#DC2626' }}>ĐẤU TRƯỜNG</span>
                             <span className="text-[#888]"> BẢN LĨNH</span>
                         </h1>
-                        <p className="text-[10px] md:text-xs text-[#333] uppercase tracking-widest hidden md:block font-semibold">
-                            Thử Thách Từ Vựng
+                        <p className="text-xs md:text-sm text-[#555] uppercase tracking-widest font-bold">
+                            Chặng {String(currentStage + 1).padStart(2, '0')}: {STAGES[currentStage]?.name || ''}
                         </p>
                     </div>
                 </div>
@@ -98,9 +98,9 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                                 boxShadow: isWarning ? '0 0 12px rgba(220,38,38,0.2)' : 'none',
                             }}
                         >
-                            <span className="text-sm" style={{ color: isWarning ? '#F87171' : '#DC2626' }}>⏱</span>
+                            <span className="text-base" style={{ color: isWarning ? '#F87171' : '#DC2626' }}>⏱</span>
                             <span
-                                className="font-mono text-lg md:text-2xl font-bold tracking-wider"
+                                className="font-mono text-xl md:text-3xl font-bold tracking-wider"
                                 style={{ color: isWarning ? '#F87171' : '#F5F5F5' }}
                             >
                                 {formatTime(timeLeft)}
@@ -219,9 +219,10 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                         return (
                             <motion.div
                                 key={stage.id}
-                                className="flex-shrink-0 flex items-center justify-center relative z-10 mx-1 md:mx-0"
-                                animate={{ scale: isActive ? 1.2 : 1 }}
+                                className="flex-shrink-0 flex flex-col items-center justify-center relative z-10 mx-1 md:mx-0 group"
+                                animate={{ scale: isActive ? 1.15 : 1 }}
                                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                                title={`Chặng ${String(index + 1).padStart(2, '0')}: ${stage.name}`}
                             >
                                 {isActive && (
                                     <span
@@ -233,16 +234,16 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                                     />
                                 )}
                                 <div
-                                    className="w-7 h-7 md:w-9 md:h-9 rounded-full flex items-center justify-center text-sm md:text-lg border-2 transition-all duration-300 relative"
+                                    className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-base md:text-xl border-2 transition-all duration-300 relative"
                                     style={{
                                         ...(isActive ? {
                                             background: 'rgba(220,38,38,0.2)',
                                             borderColor: '#DC2626',
                                             boxShadow: '0 0 12px rgba(220,38,38,0.8), 0 0 24px rgba(220,38,38,0.4)',
                                         } : isCompleted ? {
-                                            background: 'rgba(220,38,38,0.1)',
-                                            borderColor: 'rgba(220,38,38,0.3)',
-                                            opacity: 0.85,
+                                            background: 'rgba(16,185,129,0.1)',
+                                            borderColor: 'rgba(16,185,129,0.4)',
+                                            opacity: 0.9,
                                         } : {
                                             background: 'rgba(255,255,255,0.02)',
                                             borderColor: 'rgba(255,255,255,0.05)',
@@ -250,7 +251,7 @@ export default function GameHeader({ currentStage, timeLeft, mode, onShowLeaderb
                                         })
                                     }}
                                 >
-                                    {stage.icon}
+                                    {isCompleted ? '✓' : stage.icon}
                                 </div>
                             </motion.div>
                         );

@@ -56,8 +56,8 @@ export default function MatchingGame({ items, onComplete, mode = 'student' }: Ma
     };
 
     const cardStyle = (isSelected: boolean, isMatched: boolean) => ({
-        padding: '12px',
-        borderRadius: '12px',
+        padding: '16px',
+        borderRadius: '16px',
         border: '2px solid',
         borderColor: isMatched ? '#10B981' : isSelected ? '#DC2626' : 'rgba(255,255,255,0.06)',
         background: isMatched ? 'rgba(16,185,129,0.08)' : isSelected ? 'rgba(220,38,38,0.08)' : 'rgba(255,255,255,0.02)',
@@ -68,17 +68,17 @@ export default function MatchingGame({ items, onComplete, mode = 'student' }: Ma
         alignItems: 'center',
         justifyContent: 'center',
         textAlign: 'center' as const,
-        minHeight: '80px',
+        minHeight: '90px',
         opacity: isMatched ? 0.6 : 1,
         boxShadow: isSelected ? '0 0 12px rgba(220,38,38,0.2)' : 'none',
     });
 
     return (
-        <div className="w-full max-w-5xl mx-auto p-4">
-            <div className="grid grid-cols-3 gap-6">
+        <div className="w-full max-w-6xl mx-auto p-4">
+            <div className="grid grid-cols-3 gap-8">
                 {/* Column 1: Images */}
                 <div className="space-y-4">
-                    <h3 className="text-center font-bold text-[#DC2626] uppercase tracking-wider text-sm mb-2">Hình Ảnh</h3>
+                    <h3 className="text-center font-black text-[#DC2626] uppercase tracking-wider text-base md:text-lg mb-3">Hình Ảnh</h3>
                     {shuffledImages.map(item => {
                         const isMatched = matchedIds.includes(item.id);
                         const isSelected = selectedImage === item.id;
@@ -91,7 +91,7 @@ export default function MatchingGame({ items, onComplete, mode = 'student' }: Ma
                                 style={cardStyle(isSelected, isMatched)}
                                 className={error && isSelected ? 'animate-shake' : ''}
                             >
-                                <img src={item.image} alt="Match" className="w-16 h-16 object-cover rounded-lg shadow-lg" />
+                                <img src={item.image} alt="Match" className="w-20 h-20 object-cover rounded-lg shadow-lg" />
                             </motion.div>
                         );
                     })}
@@ -99,7 +99,7 @@ export default function MatchingGame({ items, onComplete, mode = 'student' }: Ma
 
                 {/* Column 2: Word Set 1 */}
                 <div className="space-y-4">
-                    <h3 className="text-center font-bold text-[#EF4444] uppercase tracking-wider text-sm mb-2">Từ Tiếng Anh</h3>
+                    <h3 className="text-center font-black text-[#EF4444] uppercase tracking-wider text-base md:text-lg mb-3">Từ Tiếng Anh</h3>
                     {shuffledWord1s.map(item => {
                         const isMatched = matchedIds.includes(item.id);
                         const isSelected = selectedWord1 === item.id;
@@ -110,7 +110,7 @@ export default function MatchingGame({ items, onComplete, mode = 'student' }: Ma
                                 whileTap={!isMatched ? { scale: 0.98 } : {}}
                                 onClick={() => !isMatched && setSelectedWord1(item.id)}
                                 style={cardStyle(isSelected, isMatched)}
-                                className={`text-lg font-bold ${error && isSelected ? 'animate-shake' : ''}`}
+                                className={`text-xl md:text-2xl font-bold ${error && isSelected ? 'animate-shake' : ''}`}
                             >
                                 {item.word1}
                             </motion.div>
@@ -120,7 +120,7 @@ export default function MatchingGame({ items, onComplete, mode = 'student' }: Ma
 
                 {/* Column 3: Word Set 2 */}
                 <div className="space-y-4">
-                    <h3 className="text-center font-bold text-[#F87171] uppercase tracking-wider text-sm mb-2">Từ Tiếng Việt</h3>
+                    <h3 className="text-center font-black text-[#F87171] uppercase tracking-wider text-base md:text-lg mb-3">Từ Tiếng Việt</h3>
                     {shuffledWord2s.map(item => {
                         const isMatched = matchedIds.includes(item.id);
                         const isSelected = selectedWord2 === item.id;
@@ -131,7 +131,7 @@ export default function MatchingGame({ items, onComplete, mode = 'student' }: Ma
                                 whileTap={!isMatched ? { scale: 0.98 } : {}}
                                 onClick={() => !isMatched && setSelectedWord2(item.id)}
                                 style={cardStyle(isSelected, isMatched)}
-                                className={`text-lg font-bold ${error && isSelected ? 'animate-shake' : ''}`}
+                                className={`text-xl md:text-2xl font-bold ${error && isSelected ? 'animate-shake' : ''}`}
                             >
                                 {item.word2}
                             </motion.div>

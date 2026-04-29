@@ -9,10 +9,9 @@ import Leaderboard from './components/Leaderboard';
 import ReviewMode from './components/ReviewMode';
 import WaitingScreen from './components/WaitingScreen';
 
-import { STAGES, getItemsForStage, MatchingItem } from './utils/gameData';
+import { STAGES, QUESTIONS, Question } from './utils/gameData';
 import { db } from './utils/firebase';
 import { collection, addDoc } from 'firebase/firestore';
-import MatchingGame from './components/MatchingGame';
 
 export type AnswerRecord = {
   questionId: string;
@@ -24,7 +23,6 @@ export default function App() {
   const [player, setPlayer] = useState({ name: '', className: '' });
   const [currentStage, setCurrentStage] = useState(0);
   const [timeLeft, setTimeLeft] = useState(8 * 60);
-  const [items, setItems] = useState<MatchingItem[]>([]);
   const [score, setScore] = useState(0);
   const [answers, setAnswers] = useState<AnswerRecord[]>([]);
   const [mode, setMode] = useState<'student' | 'teacher'>('student');
@@ -54,8 +52,6 @@ export default function App() {
   // Student start
   const handleStart = (name: string, className: string) => {
     setPlayer({ name, className });
-    const initialItems = getItemsForStage(1);
-    setItems(initialItems);
     setCurrentStage(0);
     setTimeLeft(8 * 60);
     setScore(0);
@@ -67,8 +63,6 @@ export default function App() {
   // Teacher start (no name/class needed, no timer)
   const handleTeacherStart = () => {
     setPlayer({ name: 'Teacher', className: '' });
-    const initialItems = getItemsForStage(1);
-    setItems(initialItems);
     setCurrentStage(0);
     setTimeLeft(8 * 60); // not used but reset
     setScore(0);
@@ -102,7 +96,7 @@ export default function App() {
       class: player.className,
       time: duration,
       score: finalScore,
-      totalQuestions: items.length,
+      totalQuestions: QUESTIONS.length,
       answers: allAnswers,
       date: new Date().toISOString().replace('T', ' ').substring(0, 16)
     };
@@ -117,7 +111,7 @@ export default function App() {
   const elapsedSeconds = (8 * 60) - timeLeft;
 
   return (
-    <div className="font-sans antialiased text-slate-900 bg-[#0F172A] min-h-screen">
+    <div className="font-sans antialiased text-slate-900 bg-[#000000] min-h-screen">
       <AnimatePresence mode="wait">
         {screen === 'login' && (
           <motion.div key="login" exit={{ opacity: 0 }}>
@@ -126,7 +120,7 @@ export default function App() {
         )}
 
         {screen === 'game' && (
-          <motion.div key="game" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col min-h-screen bg-[#0F172A]">
+          <motion.div key="game" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col min-h-screen bg-[#000000]">
             <GameHeader
               currentStage={currentStage}
               timeLeft={timeLeft}
@@ -134,11 +128,34 @@ export default function App() {
               onShowLeaderboard={mode === 'teacher' ? () => setScreen('leaderboard') : undefined}
               onShowReview={mode === 'teacher' ? () => setScreen('review') : undefined}
             />
-            <div className="p-3 md:p-5 w-full flex-1">
-              <MatchingGame
-                items={items}
-                onComplete={handleComplete}
+            <div className="p-3 md:p-5 w-full flex-1 overflow-auto">
+              <QuizCard
+                question={QUESTIONS[currentStage]}
+                stageNum={currentStage + 1}
+                onAnswer={(selected, isCorrect) => {
+                  const record = { questionId: QUESTIONS[currentStage].id, isCorrect };
+                  setAnswers(prev => [...prev, record]);
+                  if (isCorrect) setScore(s => s + 1);
+                  
+                  // Progress to next stage or finish
+                  setTimeout(() => {
+                    if (currentStage < STAGES.length - 1) {
+                      setCurrentStage(prev => prev + 1);
+                    } else {
+                      const duration = (8 * 60) - timeLeft;
+                      saveToLeaderboard(duration, score + (isCorrect ? 1 : 0), [...answers, record]);
+                      setScreen(mode === 'student' ? 'win' : 'login');
+                    }
+                  }, 1500);
+                }}
                 mode={mode}
+                onNextQuestion={() => {
+                   if (currentStage < STAGES.length - 1) {
+                      setCurrentStage(prev => prev + 1);
+                    } else {
+                      setScreen(mode === 'student' ? 'win' : 'login');
+                    }
+                }}
               />
             </div>
           </motion.div>

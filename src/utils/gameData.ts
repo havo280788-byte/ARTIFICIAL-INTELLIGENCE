@@ -12,48 +12,111 @@ export interface Stage {
     icon: string;
 }
 
-export const READING_PASSAGE = "";
+export interface Question {
+    id: string;
+    question: string;
+    options?: string[];
+    answer: string;
+    type?: string;
+}
+
+export const READING_PASSAGE = `Artificial Intelligence (AI) is the intelligence of machines or software, as opposed to the intelligence of humans or animals. It is a field of study in computer science that develops and studies intelligent machines. Such machines may be called AIs.
+
+AI technology is widely used throughout industry, government, and science. Some high-profile applications are: advanced web search engines (e.g., Google Search), recommendation systems (used by YouTube, Amazon, and Netflix), understanding human speech (such as Siri and Alexa), self-driving cars (e.g., Waymo), generative or creative tools (ChatGPT and AI art), and playing games at the highest level (such as chess and Go).
+
+Many AI developers are concerned about the risks of AI. They worry that AI could be used to create deepfakes to influence elections, or that it could lead to job losses as machines replace human workers. However, many people also believe that AI can be used for good, such as helping to solve climate change or improving healthcare.
+
+In the future, AI is likely to become even more advanced. It may be used to create new types of robots that can help us in our daily lives, or to develop new treatments for diseases. The possibilities are endless, but it is important to use AI responsibly and to consider the potential risks.`;
+
+export const QUESTIONS: Question[] = [
+    {
+        id: 'q1',
+        question: 'What is Artificial Intelligence (AI)?',
+        options: ['The intelligence of machines or software', 'The intelligence of humans', 'A type of hardware', 'A new search engine'],
+        answer: 'The intelligence of machines or software',
+        type: 'mcq'
+    },
+    {
+        id: 'q2',
+        question: 'Which of the following is NOT a high-profile application of AI mentioned?',
+        options: ['Google Search', 'Netflix recommendations', 'Waymo self-driving cars', 'Traditional calculators'],
+        answer: 'Traditional calculators',
+        type: 'mcq'
+    },
+    {
+        id: 'q3',
+        question: 'What are some concerns many AI developers have?',
+        options: ['AI is too expensive', 'Deepfakes and job losses', 'AI is not intelligent enough', 'AI takes too long to develop'],
+        answer: 'Deepfakes and job losses',
+        type: 'mcq'
+    },
+    {
+        id: 'q4',
+        question: 'According to the passage, how can AI be used for good?',
+        options: ['Playing games', 'Solving climate change', 'Creating art', 'Generating text'],
+        answer: 'Solving climate change',
+        type: 'mcq'
+    },
+    {
+        id: 'q5',
+        question: 'What is likely to happen to AI in the future?',
+        options: ['It will disappear', 'It will become even more advanced', 'It will be used only for games', 'It will be banned'],
+        answer: 'It will become even more advanced',
+        type: 'mcq'
+    },
+    {
+        id: 'q6',
+        question: 'What does the passage say is important when using AI?',
+        options: ['Using it as much as possible', 'Using it for profit', 'Using it responsibly', 'Using it only for research'],
+        answer: 'Using it responsibly',
+        type: 'mcq'
+    },
+    {
+        id: 'q7',
+        question: 'AI stands for...',
+        options: ['Actual Intelligence', 'Artificial Information', 'Artificial Intelligence', 'Automatic Intelligence'],
+        answer: 'Artificial Intelligence',
+        type: 'mcq'
+    },
+    {
+        id: 'q8',
+        question: 'What can Siri and Alexa do?',
+        options: ['Drive cars', 'Understand human speech', 'Solve climate change', 'Play Go'],
+        answer: 'Understand human speech',
+        type: 'mcq'
+    },
+    {
+        id: 'q9',
+        question: 'What is the main topic of the passage?',
+        options: ['The history of computers', 'The impact of AI on society', 'How to build a robot', 'The future of the internet'],
+        answer: 'The impact of AI on society',
+        type: 'mcq'
+    },
+    {
+        id: 'q10',
+        question: 'Which company is mentioned for advanced web search?',
+        options: ['Apple', 'Netflix', 'Google', 'Waymo'],
+        answer: 'Google',
+        type: 'mcq'
+    }
+];
 
 export const STAGES: Stage[] = [
-    { id: 1, name: 'Animals 1', icon: '🐶' },
-    { id: 2, name: 'Animals 2', icon: '🐱' },
-    { id: 3, name: 'Fruit 1', icon: '🍎' },
-    { id: 4, name: 'Fruit 2', icon: '🍌' },
-    { id: 5, name: 'Nature 1', icon: '🌲' },
+    { id: 1,  name: 'QUÉT RADAR',           icon: '🛰️' },
+    { id: 2,  name: 'BẪY NGỤY TRANG',       icon: '🎭' },
+    { id: 3,  name: 'COCKTAIL ĐỘC TỐ',      icon: '🧪' },
+    { id: 4,  name: 'THAO TÚNG THẦN KINH',   icon: '🧠' },
+    { id: 5,  name: 'PHẾ NANG RẠN NỨT',      icon: '🫁' },
+    { id: 6,  name: 'VÒNG TRÒN HỆ LỤY',     icon: '🏚️' },
+    { id: 7,  name: 'LÁ CHẮN THÉP',          icon: '⚖️' },
+    { id: 8,  name: 'RANH GIỚI ĐỎ',          icon: '⛔' },
+    { id: 9,  name: 'PHẢN ĐÒN BẢN LĨNH',    icon: '🛡️' },
+    { id: 10, name: 'ĐỈNH CAO TỈNH TÁO',    icon: '🏆' },
 ];
 
 
-export const MATCHING_ITEMS: MatchingItem[] = [
-    // Stage 1: Animals
-    { id: 'm1', image: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=200&h=200&fit=crop', word1: 'Dog', word2: 'Con chó' },
-    { id: 'm2', image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=200&h=200&fit=crop', word1: 'Cat', word2: 'Con mèo' },
-    { id: 'm3', image: 'https://images.unsplash.com/photo-1554692998-1e38925ba63c?w=200&h=200&fit=crop', word1: 'Elephant', word2: 'Con voi' },
-
-    // Stage 2: More Animals
-    { id: 'm4', image: 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=200&h=200&fit=crop', word1: 'Lion', word2: 'Sư tử' },
-    { id: 'm5', image: 'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=200&h=200&fit=crop', word1: 'Giraffe', word2: 'Hươu cao cổ' },
-    { id: 'm6', image: 'https://images.unsplash.com/photo-1501705388883-4ed8a543392c?w=200&h=200&fit=crop', word1: 'Horse', word2: 'Con ngựa' },
-
-    // Stage 3: Fruits
-    { id: 'm7', image: 'https://images.unsplash.com/photo-1571771894821-ad996211fdf4?w=200&h=200&fit=crop', word1: 'Banana', word2: 'Quả chuối' },
-    { id: 'm8', image: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=200&h=200&fit=crop', word1: 'Apple', word2: 'Quả táo' },
-    { id: 'm9', image: 'https://images.unsplash.com/photo-1557800636-894a64c1696f?w=200&h=200&fit=crop', word1: 'Orange', word2: 'Quả cam' },
-
-    // Stage 4: More Fruits
-    { id: 'm10', image: 'https://images.unsplash.com/photo-1528825831134-472b8344552b?w=200&h=200&fit=crop', word1: 'Grape', word2: 'Quả nho' },
-    { id: 'm11', image: 'https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=200&h=200&fit=crop', word1: 'Strawberry', word2: 'Quả dâu tây' },
-    { id: 'm12', image: 'https://images.unsplash.com/photo-1550258114-b834e70e9be1?w=200&h=200&fit=crop', word1: 'Pineapple', word2: 'Quả dứa' },
-
-    // Stage 5: Nature
-    { id: 'm13', image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=200&h=200&fit=crop', word1: 'Mountain', word2: 'Ngọn núi' },
-    { id: 'm14', image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=200&h=200&fit=crop', word1: 'Ocean', word2: 'Đại dương' },
-    { id: 'm15', image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=200&h=200&fit=crop', word1: 'Forest', word2: 'Khu rừng' },
-];
+export const MATCHING_ITEMS: MatchingItem[] = [];
 
 export const getItemsForStage = (stageId: number): MatchingItem[] => {
-    const start = (stageId - 1) * 3;
-    return MATCHING_ITEMS.slice(start, start + 3);
+    return [];
 };
-
-
-
